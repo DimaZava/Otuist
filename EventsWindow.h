@@ -3,9 +3,9 @@
 
 #include <QCalendarWidget>
 #include <QMainWindow>
-#include <QScrollArea>
 #include <QSplitter>
-#include <QVBoxLayout>
+
+#include "FoldersScrollWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class EventsWindow; }
@@ -24,9 +24,7 @@ public:
 private:
     Ui::EventsWindow *ui;
     std::unique_ptr<QSplitter> mainContentLayout;
-    std::unique_ptr<QScrollArea> foldersScrollArea;
-    std::unique_ptr<QWidget> foldersLayoutContainer;
-    std::unique_ptr<QVBoxLayout> foldersLayout;
+    std::unique_ptr<FoldersScrollWidget> foldersScrollWidget;
     std::unique_ptr<QCalendarWidget> calendar;
 
     void configureLayout();

@@ -23,6 +23,8 @@ set(PROJECT_SOURCES
         InterfaceUtils.h
         CommonUtils.cpp
         CommonUtils.h
+        FoldersScrollWidget.h
+        FoldersScrollWidget.cpp
         ${TS_FILES}
 )
 
