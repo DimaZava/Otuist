@@ -4,6 +4,8 @@
 #include <QLocale>
 #include <QTranslator>
 
+#include "CommonUtils.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -17,7 +19,10 @@ int main(int argc, char *argv[])
             break;
         }
     }
+    CommonUtils::performSetup();
+
     EventsWindow w;
+    w.readPositionSizeSettings();
     w.show();
     return a.exec();
 }
