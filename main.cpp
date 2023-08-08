@@ -21,7 +21,9 @@ int main(int argc, char *argv[])
     }
     CommonUtils::performSetup();
 
-    EventsWindow w;
+    // TODO:
+    // Replace with service locator?
+    EventsWindow w{std::shared_ptr<CalendarsRepository>{new CalendarsRepository}};
     w.readPositionSizeSettings();
     w.show();
     return a.exec();

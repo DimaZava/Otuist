@@ -3,19 +3,23 @@
 
 #include "CommonUtils.h"
 #include "InterfaceUtils.h"
+
 #include <QGuiApplication>
+#include <QPalette>
 #include <QScreen>
 #include <QStyle>
 
-EventsWindow::EventsWindow(QWidget* parent)
+EventsWindow::EventsWindow(std::shared_ptr<CalendarsRepository> calendarsRepository, QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::EventsWindow)
     , mainContentLayout(std::unique_ptr<QSplitter>{new QSplitter{parent}})
-    , foldersScrollWidget(std::unique_ptr<FoldersScrollWidget>{new FoldersScrollWidget{mainContentLayout.get()}})
-    , calendar(std::unique_ptr<QCalendarWidget>{new QCalendarWidget})
+    , foldersScrollWidget(std::unique_ptr<CalendarsScrollWidget>{new CalendarsScrollWidget{mainContentLayout.get()}})
+    , calendar(std::unique_ptr<EventsCalendarWidget>{new EventsCalendarWidget})
+    , calendarsRepository(calendarsRepository)
 {
     ui->setupUi(this);
     configureLayout();
+    setupInitialState();
 }
 
 EventsWindow::~EventsWindow()
@@ -35,6 +39,24 @@ void EventsWindow::configureLayout()
 
     calendar.get()->setContentsMargins(InterfaceUtils::defaultMargins);
     mainContentLayout->addWidget(calendar.get());
+}
+
+void EventsWindow::setupInitialState()
+{
+    // const std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+    // const std::chrono::system_clock::time_point tomorrow = now + std::chrono::hours(100 * 24);
+
+    // Event event11 = Event{now, tomorrow, "event11", "some description 11"};
+    // event11.setCategories("Work");
+    // Event event12 = Event{now, tomorrow, "event12", "some description 12"};
+    // event12.setCategories("Home");
+    // Event event13 = Event{now, tomorrow, "event13", "some description 13"};
+    // event13.setCategories("Family");
+
+    // qDebug() << event11.getName() << " " << event11.getCategory().value_or("n/a");
+    // qDebug() << event12.getName() << " " << event12.getCategory().value_or("n/a");
+    // qDebug() << event13.getName() << " " << event13.getCategory().value_or("n/a");
+    foldersScrollWidget->setCalendarItems(calendarsRepository->getCalendars());
 }
 
 void EventsWindow::writePositionSizeSettings()

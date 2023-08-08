@@ -1,11 +1,12 @@
 #ifndef EVENTSWINDOW_H
 #define EVENTSWINDOW_H
 
-#include <QCalendarWidget>
 #include <QMainWindow>
 #include <QSplitter>
 
-#include "FoldersScrollWidget.h"
+#include "CalendarsRepository.h" // remove if not needed
+#include "CalendarsScrollWidget.h"
+#include "EventsCalendarWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class EventsWindow; }
@@ -16,7 +17,7 @@ class EventsWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    EventsWindow(QWidget *parent = nullptr);
+    EventsWindow(std::shared_ptr<CalendarsRepository> calendarsRepository, QWidget* parent = nullptr);
     ~EventsWindow();
 
     void readPositionSizeSettings();
@@ -24,14 +25,18 @@ public:
 private:
     Ui::EventsWindow *ui;
     std::unique_ptr<QSplitter> mainContentLayout;
-    std::unique_ptr<FoldersScrollWidget> foldersScrollWidget;
-    std::unique_ptr<QCalendarWidget> calendar;
+    std::unique_ptr<CalendarsScrollWidget> foldersScrollWidget;
+    std::unique_ptr<EventsCalendarWidget> calendar;
+
+    std::shared_ptr<CalendarsRepository> calendarsRepository;
 
     void configureLayout();
+    void setupInitialState();
+    void setupSignals();
     void writePositionSizeSettings();
 
     void moveEvent(QMoveEvent *event);
     void resizeEvent(QResizeEvent *event);
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent* event);
 };
 #endif // EVENTSWINDOW_H

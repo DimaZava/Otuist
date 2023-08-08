@@ -19,12 +19,15 @@ set(PROJECT_SOURCES
         EventsWindow.cpp
         EventsWindow.h
         EventsWindow.ui
-        InterfaceUtils.cpp
-        InterfaceUtils.h
-        CommonUtils.cpp
-        CommonUtils.h
-        FoldersScrollWidget.h
-        FoldersScrollWidget.cpp
+        InterfaceUtils.h InterfaceUtils.cpp
+        CommonUtils.h CommonUtils.cpp
+        CalendarsScrollWidget.h CalendarsScrollWidget.cpp
+        EventsCalendarWidget.h EventsCalendarWidget.cpp
+        CalendarsLayout.h CalendarsLayout.cpp
+        TreeItem.h TreeItem.cpp
+        Event.h Event.cpp
+        CalendarItem.h CalendarItem.cpp
+        CalendarsRepository.h CalendarsRepository.cpp
         ${TS_FILES}
 )
 
