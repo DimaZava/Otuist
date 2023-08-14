@@ -39,7 +39,7 @@ CalendarsRepository::~CalendarsRepository()
 void CalendarsRepository::addCalendar(const std::shared_ptr<CalendarItem>& calendar)
 {
     addObject(calendar);
-    notify();
+    // notify();
 }
 
 std::set<std::shared_ptr<CalendarItem>> CalendarsRepository::getCalendars() const
@@ -55,11 +55,23 @@ std::optional<std::shared_ptr<CalendarItem>> CalendarsRepository::getCalendar(co
 void CalendarsRepository::updateCalendar(const std::string& name, const std::shared_ptr<CalendarItem>& calendar)
 {
     // updateObject(name, calendar);
-    notify();
+    // notify();
 }
 
 void CalendarsRepository::deleteCalendar(const std::string& name)
 {
     deleteObject(name);
-    notify();
+    // notify();
+}
+
+std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEventsBetweenDatesForCalendars(
+    const std::chrono::time_point<std::chrono::system_clock> beginDateTime,
+    const std::optional<std::chrono::time_point<std::chrono::system_clock>>,
+    const std::optional<std::set<std::string>> calendarNames) const
+{
+    auto connectedCalendars = readObjects();
+    std::set<std::shared_ptr<CalendarEvent>> collectedEvents;
+    for (const auto& calendar : connectedCalendars)
+    {
+    }
 }

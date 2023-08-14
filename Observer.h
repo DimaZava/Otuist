@@ -4,25 +4,40 @@
 #include <iostream>
 #include <vector>
 
-class Subject;
-
+template <typename T>
 class Observer
 {
 public:
     virtual ~Observer() = default;
-    virtual void update(Subject&) = 0;
+    virtual void notify(const T& value) = 0;
 };
 
+template <typename T>
 class Subject
 {
 public:
     virtual ~Subject() = default;
-    void attach(Observer& o);
-    void detach(Observer& o);
-    void notify();
+
+    void addObserver(Observer<T>* observer)
+    {
+        observers.push_back(observer);
+    }
+
+    void removeObserver(Observer<T>* observer)
+    {
+        observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
+    }
+
+    void notify(const T& value)
+    {
+        for (Observer<T>* observer : observers)
+        {
+            observer->notify(value);
+        }
+    }
 
 private:
-    std::vector<Observer*> observers;
+    std::vector<Observer<T>*> observers;
 };
 
 #endif // OBSERVER_H

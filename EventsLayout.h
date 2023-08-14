@@ -10,16 +10,15 @@
 
 class EventsLayout
     : public QVBoxLayout
-    , public Observer
+    , public Observer<std::set<std::shared_ptr<CalendarEvent>>>
 {
     Q_OBJECT
 public:
-    explicit EventsLayout(Subject& subject, QWidget* parent = nullptr);
+    explicit EventsLayout(Subject<std::set<std::shared_ptr<CalendarEvent>>>& subject, QWidget* parent = nullptr);
     ~EventsLayout() override;
 
     void setCalendarEvents(const std::set<std::shared_ptr<CalendarEvent>>& calendarEvents);
-
-    void update(Subject&) override;
+    void notify(const std::set<std::shared_ptr<CalendarEvent>>& value) override;
 
 private:
     QTextEdit* tmp;

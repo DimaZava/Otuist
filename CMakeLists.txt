@@ -29,7 +29,7 @@ set(PROJECT_SOURCES
         EventsScrollWidget.h EventsScrollWidget.cpp
         ObjectsRepository.h
         CalendarsRepository.h CalendarsRepository.cpp
-        Observer.h Observer.cpp
+        Observer.h
         NamedObjectInterface.h
         ${TS_FILES}
 )

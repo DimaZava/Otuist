@@ -1,11 +1,11 @@
 #include "EventsLayout.h"
 #include "InterfaceUtils.h"
 
-EventsLayout::EventsLayout(Subject& subject, QWidget* parent)
+EventsLayout::EventsLayout(Subject<std::set<std::shared_ptr<CalendarEvent>>>& subject, QWidget* parent)
     : QVBoxLayout(parent)
     , tmp(new QTextEdit{"test"})
 {
-    subject.attach(*this);
+    subject.addObserver(this);
     configureLayout();
 }
 
@@ -24,6 +24,11 @@ void EventsLayout::setCalendarEvents(const std::set<std::shared_ptr<CalendarEven
     reloadData();
 }
 
+void EventsLayout::notify(const std::set<std::shared_ptr<CalendarEvent>>& value)
+{
+    setCalendarEvents(value);
+}
+
 void EventsLayout::reloadData()
 {
     tmp->clear();
@@ -39,9 +44,4 @@ void EventsLayout::reloadData()
         qString += eventString;
         tmp->setText(qString);
     }
-}
-
-void EventsLayout::update(Subject& subject)
-{
-    std::cout << "Observer received update. New state \n";
 }

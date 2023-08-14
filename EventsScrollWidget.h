@@ -12,7 +12,7 @@ class EventsScrollWidget : public QScrollArea
 {
     Q_OBJECT
 public:
-    explicit EventsScrollWidget(Subject& subject, QWidget* parent = nullptr);
+    explicit EventsScrollWidget(Subject<std::set<std::shared_ptr<CalendarEvent>>>& subject, QWidget* parent = nullptr);
     ~EventsScrollWidget() override;
 
 private:
