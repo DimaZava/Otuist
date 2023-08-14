@@ -24,10 +24,12 @@ set(PROJECT_SOURCES
         CalendarsScrollWidget.h CalendarsScrollWidget.cpp
         EventsCalendarWidget.h EventsCalendarWidget.cpp
         CalendarsLayout.h CalendarsLayout.cpp
-        TreeItem.h TreeItem.cpp
         Event.h Event.cpp
         CalendarItem.h CalendarItem.cpp
+        ObjectsRepository.h
         CalendarsRepository.h CalendarsRepository.cpp
+        Observer.h Observer.cpp
+        NamedObjectInterface.h
         ${TS_FILES}
 )
 

@@ -1,20 +1,26 @@
 #ifndef CALENDARSREPOSITORY_H
 #define CALENDARSREPOSITORY_H
 
-#include <set>
-
 #include "CalendarItem.h"
+#include "ObjectsRepository.h"
+#include "Observer.h"
 
-class CalendarsRepository
+class CalendarsRepository : protected ObjectsRepository<std::shared_ptr<CalendarItem>> //: public Observer
 {
 public:
     CalendarsRepository();
+    CalendarsRepository(const CalendarsRepository& repository) = delete;
+    CalendarsRepository(CalendarsRepository&& repository) = delete;
     ~CalendarsRepository();
 
-    const std::set<std::shared_ptr<CalendarItem>> getCalendars() const;
+    void addCalendar(const std::shared_ptr<CalendarItem>& calendar);
+    std::set<std::shared_ptr<CalendarItem>> getCalendars() const;
+    std::optional<std::shared_ptr<CalendarItem>> getCalendar(const std::string& name) const;
+    void updateCalendar(const std::string& name, const std::shared_ptr<CalendarItem>& calendar);
+    void deleteCalendar(const std::string& name);
 
-private:
-    std::set<std::shared_ptr<CalendarItem>> connectedCalendars;
+    CalendarsRepository& operator=(const CalendarsRepository& other) = delete;
+    CalendarsRepository& operator=(CalendarsRepository&& other) = delete;
 };
 
 #endif // CALENDARSREPOSITORY_H

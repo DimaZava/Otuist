@@ -1,13 +1,13 @@
 #include "CalendarsRepository.h"
 
-CalendarsRepository::CalendarsRepository()
-    : connectedCalendars(std::set<std::shared_ptr<CalendarItem>>{})
-{
-    connectedCalendars.emplace(new CalendarItem{"Default", {"Work", "Home", "Family"}});
+CalendarsRepository::CalendarsRepository(){
+    // small workaround to fix make_shared init list issue
+    addCalendar(std::make_shared<CalendarItem>("Default", std::set<std::string>{"Work", "Home", "Family"}));
 }
 
 CalendarsRepository::~CalendarsRepository()
 {
+    auto connectedCalendars = readObjects();
     while (!connectedCalendars.empty())
     {
         auto ptr = (*connectedCalendars.begin());
@@ -16,7 +16,27 @@ CalendarsRepository::~CalendarsRepository()
     }
 }
 
-const std::set<std::shared_ptr<CalendarItem>> CalendarsRepository::getCalendars() const
+void CalendarsRepository::addCalendar(const std::shared_ptr<CalendarItem>& calendar)
 {
-    return connectedCalendars;
+    addObject(calendar);
+}
+
+std::set<std::shared_ptr<CalendarItem>> CalendarsRepository::getCalendars() const
+{
+    return readObjects();
+}
+
+std::optional<std::shared_ptr<CalendarItem>> CalendarsRepository::getCalendar(const std::string& name) const
+{
+    return readObject(name);
+}
+
+void CalendarsRepository::updateCalendar(const std::string& name, const std::shared_ptr<CalendarItem>& calendar)
+{
+    // updateObject(name, calendar);
+}
+
+void CalendarsRepository::deleteCalendar(const std::string& name)
+{
+    deleteObject(name);
 }
