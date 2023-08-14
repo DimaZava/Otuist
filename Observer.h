@@ -10,16 +10,16 @@ class Observer
 {
 public:
     virtual ~Observer() = default;
-    virtual void Update(Subject&) = 0;
+    virtual void update(Subject&) = 0;
 };
 
 class Subject
 {
 public:
     virtual ~Subject() = default;
-    void Attach(Observer& o);
-    void Detach(Observer& o);
-    void Notify();
+    void attach(Observer& o);
+    void detach(Observer& o);
+    void notify();
 
 private:
     std::vector<Observer*> observers;

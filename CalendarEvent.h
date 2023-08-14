@@ -1,18 +1,29 @@
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef CALENDAREVENT_H
+#define CALENDAREVENT_H
 
 #include <QDate>
 #include <optional>
 #include <string>
 
-class Event
+class CalendarEvent
 {
 public:
-    Event(
+    CalendarEvent(
+        const std::string& name,
+        const std::string& calendarName,
         const std::chrono::time_point<std::chrono::system_clock>& beginDateTime,
         const std::optional<std::chrono::time_point<std::chrono::system_clock>>& endDateTime,
-        const std::string& name,
         const std::optional<std::string>& description);
+    CalendarEvent(const CalendarEvent& event);
+    CalendarEvent(CalendarEvent&& event) noexcept;
+    ~CalendarEvent();
+
+    CalendarEvent& operator=(const CalendarEvent& other);
+    CalendarEvent& operator=(CalendarEvent&& other) noexcept;
+
+    bool operator<(const CalendarEvent& other) const;
+    bool operator==(const CalendarEvent& other) const;
+    bool operator!=(const CalendarEvent& other) const;
 
 public slots:
     const std::chrono::time_point<std::chrono::system_clock> getBeginDateTime() const;
@@ -66,4 +77,4 @@ private:
     std::optional<std::string> href;
 };
 
-#endif // EVENT_H
+#endif // CALENDAREVENT_H

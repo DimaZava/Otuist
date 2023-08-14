@@ -4,42 +4,40 @@
 #include <QHeaderView>
 #include <set>
 
-CalendarsLayout::CalendarsLayout(QWidget* parent)
+CalendarsLayout::CalendarsLayout(const std::shared_ptr<CalendarsRepository>& calendarsRepository, QWidget* parent)
     : QVBoxLayout(parent)
-    , categoriesTree(std::unique_ptr<QTreeWidget>(new QTreeWidget))
+    , calendarsRepository(calendarsRepository)
+    , categoriesTree(std::make_unique<QTreeWidget>(new QTreeWidget))
 {
     configureLayout();
 }
 
 CalendarsLayout::~CalendarsLayout()
 {
-    categoriesTree.release();
+    categoriesTree.reset();
 }
 
 void CalendarsLayout::configureLayout()
 {
     categoriesTree->setHeaderHidden(true);
-    categoriesTree.get()->setHeaderLabels({"Is Enabled", "Title"});
-    categoriesTree.get()->header()->setSectionResizeMode(QHeaderView::Stretch);
+    categoriesTree->setHeaderLabels({"Is Enabled", "Title"});
+    categoriesTree->header()->setSectionResizeMode(QHeaderView::Stretch);
 
     categoriesTree->setContentsMargins(InterfaceUtils::zeroMargins);
     categoriesTree->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     categoriesTree->setColumnWidth(0, 25);
     // categoriesTree->setColumnWidth(1, 100);
     addWidget(categoriesTree.get());
-}
 
-void CalendarsLayout::setCalendarItems(const std::set<std::shared_ptr<CalendarItem>>& calendarItems)
-{
-    this->calendarItems = calendarItems;
     reloadData();
+    categoriesTree->expandAll();
 }
 
 void CalendarsLayout::reloadData()
 {
     categoriesTree->clear();
 
-    for (const auto& calendarItem : calendarItems)
+    for (const auto& calendarItem : calendarsRepository->getCalendars())
     {
         QTreeWidgetItem* topWidgetItem = new QTreeWidgetItem{categoriesTree.get()};
         topWidgetItem->setText(0, calendarItem.get()->getName().c_str());

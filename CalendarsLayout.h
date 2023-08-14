@@ -1,7 +1,7 @@
 #ifndef CALENDARSLAYOUT_H
 #define CALENDARSLAYOUT_H
 
-#include "CalendarItem.h"
+#include "CalendarsRepository.h"
 
 #include <QLabel>
 #include <QTreeWidget>
@@ -11,13 +11,13 @@ class CalendarsLayout : public QVBoxLayout
 {
     Q_OBJECT
 public:
-    CalendarsLayout(QWidget* parent = nullptr);
-    ~CalendarsLayout();
-
-    void setCalendarItems(const std::set<std::shared_ptr<CalendarItem>>& calendarItems);
+    explicit CalendarsLayout(
+        const std::shared_ptr<CalendarsRepository>& calendarsRepository,
+        QWidget* parent = nullptr);
+    ~CalendarsLayout() override;
 
 private:
-    std::set<std::shared_ptr<CalendarItem>> calendarItems;
+    const std::shared_ptr<CalendarsRepository>& calendarsRepository;
     std::unique_ptr<QTreeWidget> categoriesTree;
 
     void configureLayout();

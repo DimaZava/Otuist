@@ -1,19 +1,19 @@
 #include "Observer.h"
 
-void Subject::Attach(Observer& o)
+void Subject::attach(Observer& observer)
 {
-    observers.push_back(&o);
+    observers.push_back(&observer);
 }
 
-void Subject::Detach(Observer& o)
+void Subject::detach(Observer& observer)
 {
-    observers.erase(std::remove(observers.begin(), observers.end(), &o));
+    observers.erase(std::remove(observers.begin(), observers.end(), &observer), observers.end());
 }
 
-void Subject::Notify()
+void Subject::notify()
 {
-    for (auto* o : observers)
+    for (const auto& observer : observers)
     {
-        o->Update(*this);
+        observer->update(*this);
     }
 }

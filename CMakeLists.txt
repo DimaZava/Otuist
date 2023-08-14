@@ -22,10 +22,11 @@ set(PROJECT_SOURCES
         InterfaceUtils.h InterfaceUtils.cpp
         CommonUtils.h CommonUtils.cpp
         CalendarsScrollWidget.h CalendarsScrollWidget.cpp
-        EventsCalendarWidget.h EventsCalendarWidget.cpp
+        CalendarWidget.h CalendarWidget.cpp
         CalendarsLayout.h CalendarsLayout.cpp
-        Event.h Event.cpp
+        CalendarEvent.h CalendarEvent.cpp
         CalendarItem.h CalendarItem.cpp
+        EventsScrollWidget.h EventsScrollWidget.cpp
         ObjectsRepository.h
         CalendarsRepository.h CalendarsRepository.cpp
         Observer.h Observer.cpp
@@ -37,6 +38,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Otuist
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        EventsLayout.h EventsLayout.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Otuist APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

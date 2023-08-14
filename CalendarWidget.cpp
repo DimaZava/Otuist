@@ -1,37 +1,37 @@
-#include "EventsCalendarWidget.h"
+#include "CalendarWidget.h"
 
 #include <QApplication>
 #include <QMenu>
 #include <QPalette>
 #include <QTableView>
 
-EventsCalendarWidget::EventsCalendarWidget()
+CalendarWidget::CalendarWidget()
     : QCalendarWidget()
-    , highlighter(std::unique_ptr<QTextCharFormat>{new QTextCharFormat})
+    , highlighter(std::make_unique<QTextCharFormat>())
 {
     performInitialSetup();
 }
 
-void EventsCalendarWidget::performInitialSetup()
+void CalendarWidget::performInitialSetup()
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this, &QCalendarWidget::customContextMenuRequested, this, &EventsCalendarWidget::provideContextMenu);
+    connect(this, &QCalendarWidget::customContextMenuRequested, this, &CalendarWidget::provideContextMenu);
 
     highlighter->setBackground(palette().brush(QPalette::Highlight));
     highlighter->setForeground(palette().brush(QPalette::HighlightedText));
 
-    connect(this, &QCalendarWidget::clicked, this, &EventsCalendarWidget::selectDateRange);
+    connect(this, &QCalendarWidget::clicked, this, &CalendarWidget::selectDateRange);
     dateTextFormat();
 }
 
-void EventsCalendarWidget::selectDateRange(QDate date)
+void CalendarWidget::selectDateRange(QDate date)
 {
     highlightRange(QTextCharFormat{});
 
     if (qApp->keyboardModifiers() & Qt::ShiftModifier && beginDate.has_value())
     {
         this->endDate = date;
-        highlightRange(*highlighter.get());
+        highlightRange(*highlighter);
     }
     else
     {
@@ -40,7 +40,7 @@ void EventsCalendarWidget::selectDateRange(QDate date)
     }
 }
 
-void EventsCalendarWidget::highlightRange(QTextCharFormat format)
+void CalendarWidget::highlightRange(QTextCharFormat format)
 {
     if (!beginDate.has_value() || !endDate.has_value())
         return;
@@ -55,7 +55,7 @@ void EventsCalendarWidget::highlightRange(QTextCharFormat format)
     }
 }
 
-std::optional<QDate> EventsCalendarWidget::dateFromPosition(const QPoint& position)
+std::optional<QDate> CalendarWidget::dateFromPosition(const QPoint& position)
 {
     const QTableView* const view = findChild<const QTableView*>();
     const QAbstractItemModel* const model = view->model();
@@ -120,7 +120,7 @@ std::optional<QDate> EventsCalendarWidget::dateFromPosition(const QPoint& positi
     return resultDate;
 }
 
-void EventsCalendarWidget::provideContextMenu(const QPoint& pos)
+void CalendarWidget::provideContextMenu(const QPoint& pos)
 {
     QPoint item = this->mapToGlobal(pos);
     QMenu submenu;
@@ -141,7 +141,7 @@ void EventsCalendarWidget::provideContextMenu(const QPoint& pos)
     }
 }
 
-void EventsCalendarWidget::paintCell(QPainter* painter, const QRect& rect, QDate date) const
+void CalendarWidget::paintCell(QPainter* painter, const QRect& rect, QDate date) const
 {
     QCalendarWidget::paintCell(painter, rect, date);
     // draw calendar cell marks

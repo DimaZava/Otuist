@@ -1,16 +1,16 @@
-#ifndef EVENTSCALENDARWIDGET_H
-#define EVENTSCALENDARWIDGET_H
+#ifndef CALENDARWIDGET_H
+#define CALENDARWIDGET_H
 
 #include <QCalendarWidget>
 #include <QPainter>
 #include <QTextCharFormat>
 #include <optional>
 
-class EventsCalendarWidget : public QCalendarWidget
+class CalendarWidget : public QCalendarWidget
 {
     Q_OBJECT
 public:
-    EventsCalendarWidget();
+    CalendarWidget();
 
 protected:
     void paintCell(QPainter* painter, const QRect& rect, QDate date) const;
@@ -29,4 +29,4 @@ private slots:
     void provideContextMenu(const QPoint& pos);
 };
 
-#endif // EVENTSCALENDARWIDGET_H
+#endif // CALENDARWIDGET_H

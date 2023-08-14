@@ -5,13 +5,15 @@
 #include "ObjectsRepository.h"
 #include "Observer.h"
 
-class CalendarsRepository : protected ObjectsRepository<std::shared_ptr<CalendarItem>> //: public Observer
+class CalendarsRepository
+    : protected ObjectsRepository<std::shared_ptr<CalendarItem>>
+    , public Subject
 {
 public:
     CalendarsRepository();
     CalendarsRepository(const CalendarsRepository& repository) = delete;
     CalendarsRepository(CalendarsRepository&& repository) = delete;
-    ~CalendarsRepository();
+    ~CalendarsRepository() override;
 
     void addCalendar(const std::shared_ptr<CalendarItem>& calendar);
     std::set<std::shared_ptr<CalendarItem>> getCalendars() const;

@@ -2,18 +2,20 @@
 
 #include "InterfaceUtils.h"
 
-CalendarsScrollWidget::CalendarsScrollWidget(QWidget* parent)
+CalendarsScrollWidget::CalendarsScrollWidget(
+    const std::shared_ptr<CalendarsRepository>& calendarsRepository,
+    QWidget* parent)
     : QScrollArea(parent)
-    , calendarsLayoutContainer(std::unique_ptr<QWidget>{new QWidget{this}})
-    , calendarsLayout(std::unique_ptr<CalendarsLayout>{new CalendarsLayout{calendarsLayoutContainer.get()}})
+    , calendarsLayoutContainer(std::make_unique<QWidget>(this))
+    , calendarsLayout(std::make_unique<CalendarsLayout>(calendarsRepository, calendarsLayoutContainer.get()))
 {
     configureLayout();
 }
 
 CalendarsScrollWidget::~CalendarsScrollWidget()
 {
-    calendarsLayoutContainer.release();
-    calendarsLayout.release();
+    calendarsLayoutContainer.reset();
+    calendarsLayout.reset();
 }
 
 void CalendarsScrollWidget::configureLayout()
@@ -27,9 +29,4 @@ void CalendarsScrollWidget::configureLayout()
 
     calendarsLayout->setSizeConstraint(QLayout::SetMaximumSize);
     calendarsLayout->setContentsMargins(InterfaceUtils::defaultMargins);
-}
-
-void CalendarsScrollWidget::setCalendarItems(const std::set<std::shared_ptr<CalendarItem>>& calendarItems)
-{
-    calendarsLayout->setCalendarItems(calendarItems);
 }

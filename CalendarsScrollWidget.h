@@ -2,6 +2,7 @@
 #define CALENDARSSCROLLWIDGET_H
 
 #include "CalendarsLayout.h"
+#include "CalendarsRepository.h"
 
 #include <QScrollArea>
 #include <QVBoxLayout>
@@ -10,10 +11,10 @@ class CalendarsScrollWidget : public QScrollArea
 {
     Q_OBJECT
 public:
-    CalendarsScrollWidget(QWidget* parent = nullptr);
-    ~CalendarsScrollWidget();
-
-    void setCalendarItems(const std::set<std::shared_ptr<CalendarItem>>& calendarItems);
+    explicit CalendarsScrollWidget(
+        const std::shared_ptr<CalendarsRepository>& calendarsRepository,
+        QWidget* parent = nullptr);
+    ~CalendarsScrollWidget() override;
 
 private:
     std::unique_ptr<QWidget> calendarsLayoutContainer;

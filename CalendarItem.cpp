@@ -1,18 +1,23 @@
 #include "CalendarItem.h"
 
-CalendarItem::CalendarItem(std::string name, std::set<std::string> categories, std::vector<Event> events)
+CalendarItem::CalendarItem(
+    const std::string& name,
+    const std::set<std::string>& categories,
+    const std::set<CalendarEvent>& events)
     : uuid(std::to_string(std::rand()))
     , name(name)
     , categories(categories)
     , events(events)
-{}
+{
+}
 
 CalendarItem::CalendarItem(const CalendarItem& calendar)
     : uuid(calendar.uuid)
     , name(calendar.name)
     , categories(calendar.categories)
     , events(calendar.events)
-{}
+{
+}
 
 CalendarItem::CalendarItem(CalendarItem&& calendar) noexcept
     : uuid(std::exchange(calendar.uuid, nullptr))
@@ -36,7 +41,7 @@ std::string CalendarItem::getName() const
     return name;
 }
 
-std::vector<Event> CalendarItem::getEvents() const
+std::set<CalendarEvent> CalendarItem::getEvents() const
 {
     return events;
 }
