@@ -71,7 +71,8 @@ void EventsLayout::reloadData()
     {
         std::string eventString;
         eventString += "Name: " + event->getName() + "\n";
-        eventString += "CalendarName: " + event->getCalendarName().value_or("N/A") + "\n";
+        eventString += "CalendarName: " + event->getCalendarName() + "\n";
+        eventString += "Category: " + event->getCategory() + "\n";
         eventString += "Begin Date: " + CommonUtils::Time::stringFromStdChrono(event->getBeginDateTime()) + "\n";
         if (event->getEndDateTime().has_value())
         {

@@ -11,6 +11,7 @@ public:
     CalendarEvent(
         const std::string& name,
         const std::string& calendarName,
+        const std::string& category,
         const std::chrono::time_point<std::chrono::system_clock>& beginDateTime,
         const std::optional<std::chrono::time_point<std::chrono::system_clock>>& endDateTime,
         const std::optional<std::string>& description);
@@ -41,8 +42,8 @@ public slots:
     const std::optional<std::string> getColor() const;
     void setColor(const std::optional<std::string>& color);
 
-    const std::optional<std::string> getCalendarName() const;
-    void setCalendarName(const std::optional<std::string>& calendarName);
+    const std::string getCalendarName() const;
+    void setCalendarName(const std::string& calendarName);
 
     const std::optional<std::string> getLocation() const;
     void setLocation(const std::optional<std::string>& location);
@@ -52,9 +53,9 @@ public slots:
 
     const std::optional<std::string> getExdates() const;
     void setExdates(const std::optional<std::string>& exdates);
-    
-    const std::optional<std::string> getCategory() const;
-    void setCategories(const std::optional<std::string>& categories);
+
+    const std::string getCategory() const;
+    void setCategory(const std::string& category);
 
     const std::optional<std::string> getUid() const;
     void setUid(const std::optional<std::string>& uid);
@@ -68,11 +69,11 @@ private:
     std::string name;
     std::optional<std::string> description;
     std::optional<std::string> color;
-    std::optional<std::string> calendarName;
+    std::string calendarName;
     std::optional<std::string> location;
     std::optional<std::string> rRule;
     std::optional<std::string> exdates;
-    std::optional<std::string> categories;
+    std::string category;
     std::optional<std::string> uid;
     std::optional<std::string> href;
 };

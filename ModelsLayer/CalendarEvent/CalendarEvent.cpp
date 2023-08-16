@@ -3,11 +3,13 @@
 CalendarEvent::CalendarEvent(
     const std::string& name,
     const std::string& calendarName,
+    const std::string& category,
     const std::chrono::time_point<std::chrono::system_clock>& beginDateTime,
     const std::optional<std::chrono::time_point<std::chrono::system_clock>>& endDateTime,
     const std::optional<std::string>& description)
     : name(name)
     , calendarName(calendarName)
+    , category(category)
     , beginDateTime(beginDateTime)
     , endDateTime(endDateTime)
     , description(description)
@@ -16,6 +18,7 @@ CalendarEvent::CalendarEvent(
 CalendarEvent::CalendarEvent(const CalendarEvent& event)
     : name(event.name)
     , calendarName(event.calendarName)
+    , category(event.category)
     , beginDateTime(event.beginDateTime)
     , endDateTime(event.endDateTime)
     , description(event.description)
@@ -24,6 +27,7 @@ CalendarEvent::CalendarEvent(const CalendarEvent& event)
 CalendarEvent::CalendarEvent(CalendarEvent&& event) noexcept
     : name(std::exchange(event.name, nullptr))
     , calendarName(std::exchange(event.calendarName, nullptr))
+    , category(std::exchange(event.category, nullptr))
     , beginDateTime(event.beginDateTime) // trivially-copyable type
     , endDateTime(event.endDateTime)     // trivially-copyable type
     , description(std::exchange(event.description, nullptr))
@@ -126,12 +130,12 @@ void CalendarEvent::setColor(const std::optional<std::string>& color)
     this->color = color;
 }
 
-const std::optional<std::string> CalendarEvent::getCalendarName() const
+const std::string CalendarEvent::getCalendarName() const
 {
     return calendarName;
 }
 
-void CalendarEvent::setCalendarName(const std::optional<std::string>& calendarName)
+void CalendarEvent::setCalendarName(const std::string& calendarName)
 {
     this->calendarName = calendarName;
 }
@@ -166,14 +170,14 @@ void CalendarEvent::setExdates(const std::optional<std::string>& exdates)
     this->exdates = exdates;
 }
 
-const std::optional<std::string> CalendarEvent::getCategory() const
+const std::string CalendarEvent::getCategory() const
 {
-    return categories;
+    return category;
 }
 
-void CalendarEvent::setCategories(const std::optional<std::string>& categories)
+void CalendarEvent::setCategory(const std::string& category)
 {
-    this->categories = categories;
+    this->category = category;
 }
 
 const std::optional<std::string> CalendarEvent::getUid() const

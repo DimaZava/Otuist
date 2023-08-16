@@ -4,6 +4,17 @@
 #include <QHeaderView>
 #include <set>
 
+enum class WidgetCalendarColumns
+{
+    categoryName = 0
+};
+
+enum class WidgetCategoryColumns
+{
+    checkState = 0,
+    categoryName
+};
+
 CalendarsLayout::CalendarsLayout(const std::shared_ptr<CalendarsRepository>& calendarsRepository, QWidget* parent)
     : QVBoxLayout(parent)
     , calendarsRepository(calendarsRepository)
@@ -28,6 +39,8 @@ void CalendarsLayout::configureLayout()
     categoriesTree->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     categoriesTree->setColumnWidth(0, 25);
     // categoriesTree->setColumnWidth(1, 100);
+
+    connect(categoriesTree.get(), &QTreeWidget::itemChanged, this, &CalendarsLayout::treeItemDidChange);
     addWidget(categoriesTree.get());
 
     reloadData();
@@ -46,10 +59,22 @@ void CalendarsLayout::reloadData()
         for (const auto& category : calendarItem.get()->getCategories())
         {
             QTreeWidgetItem* categoryWidgetItem = new QTreeWidgetItem{topWidgetItem};
-            categoryWidgetItem->setCheckState(0, Qt::CheckState::Checked);
-            auto tmp = category.c_str();
-            qDebug() << tmp;
-            categoryWidgetItem->setText(1, category.c_str());
+            categoryWidgetItem->setCheckState(
+                static_cast<int>(WidgetCategoryColumns::checkState), Qt::CheckState::Checked);
+            categoryWidgetItem->setText(static_cast<int>(WidgetCategoryColumns::categoryName), category->name.c_str());
         }
     }
+}
+
+void CalendarsLayout::treeItemDidChange(QTreeWidgetItem* item, int column)
+{
+    QTreeWidgetItem* calendarTreeWidgetItem = item->parent();
+    if (calendarTreeWidgetItem == nullptr)
+        return;
+
+    std::string calendarName =
+        calendarTreeWidgetItem->text(static_cast<int>(WidgetCalendarColumns::categoryName)).toStdString();
+    bool newCheckState = item->checkState(static_cast<int>(WidgetCategoryColumns::checkState));
+    std::string categoryName = item->text(static_cast<int>(WidgetCategoryColumns::categoryName)).toStdString();
+    calendarsRepository->setCalendarsCategoryActive(calendarName, categoryName, newCheckState);
 }

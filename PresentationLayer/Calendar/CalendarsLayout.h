@@ -22,6 +22,9 @@ private:
 
     void configureLayout();
     void reloadData();
+
+private slots:
+    void treeItemDidChange(QTreeWidgetItem* item, int column);
 };
 
 #endif // CALENDARSLAYOUT_H

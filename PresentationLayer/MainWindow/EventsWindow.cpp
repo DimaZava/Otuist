@@ -16,7 +16,7 @@ EventsWindow::EventsWindow(QWidget* parent)
     , mainContentLayout(std::make_unique<QSplitter>(parent))
     , eventsContentLayout(std::make_unique<QSplitter>(mainContentLayout.get()))
     , calendarsScrollWidget(std::make_unique<CalendarsScrollWidget>(calendarsRepository, mainContentLayout.get()))
-    , calendarWidget(std::make_unique<CalendarWidget>())
+    , calendarWidget(std::make_unique<CalendarWidget>(calendarsRepository))
     , eventsScrollWidget(
           std::make_unique<EventsScrollWidget>(calendarsRepository, *calendarWidget, eventsContentLayout.get()))
 {

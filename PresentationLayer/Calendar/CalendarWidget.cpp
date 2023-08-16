@@ -5,8 +5,9 @@
 #include <QPalette>
 #include <QTableView>
 
-CalendarWidget::CalendarWidget()
+CalendarWidget::CalendarWidget(const std::shared_ptr<CalendarsRepository>& calendarsRepository)
     : QCalendarWidget()
+    , calendarsRepository(calendarsRepository)
     , highlighter(std::make_unique<QTextCharFormat>())
 {
     performInitialSetup();

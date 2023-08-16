@@ -28,7 +28,7 @@ public:
         observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
     }
 
-    void notify(const T& value)
+    void notify(const T& value) const
     {
         for (IObserver<T>* observer : observers)
         {
