@@ -14,31 +14,21 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
 set(TS_FILES Otuist_en_150.ts)
 
+FILE(GLOB_RECURSE headers "*.h")
+FILE(GLOB_RECURSE sources "*.cpp")
+
 set(PROJECT_SOURCES
-        main.cpp
-        EventsWindow.cpp
-        EventsWindow.h
-        EventsWindow.ui
-        InterfaceUtils.h InterfaceUtils.cpp
-        CommonUtils.h CommonUtils.cpp
-        CalendarsScrollWidget.h CalendarsScrollWidget.cpp
-        CalendarWidget.h CalendarWidget.cpp
-        CalendarsLayout.h CalendarsLayout.cpp
-        CalendarEvent.h CalendarEvent.cpp
-        CalendarItem.h CalendarItem.cpp
-        EventsScrollWidget.h EventsScrollWidget.cpp
-        ObjectsRepository.h
-        CalendarsRepository.h CalendarsRepository.cpp
-        Observer.h
-        NamedObjectInterface.h
-        ${TS_FILES}
+    ${sources}
+    ${headers}
+    ${TS_FILES}
 )
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${sources} ${headers})
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Otuist
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        EventsLayout.h EventsLayout.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Otuist APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

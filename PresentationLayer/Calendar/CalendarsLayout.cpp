@@ -1,5 +1,5 @@
 #include "CalendarsLayout.h"
-#include "InterfaceUtils.h"
+#include "../../PresentationLayer/InterfaceUtils.h"
 
 #include <QHeaderView>
 #include <set>
@@ -14,6 +14,7 @@ CalendarsLayout::CalendarsLayout(const std::shared_ptr<CalendarsRepository>& cal
 
 CalendarsLayout::~CalendarsLayout()
 {
+    qDebug() << __PRETTY_FUNCTION__;
     categoriesTree.reset();
 }
 

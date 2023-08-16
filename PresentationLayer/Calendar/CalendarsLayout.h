@@ -1,7 +1,7 @@
 #ifndef CALENDARSLAYOUT_H
 #define CALENDARSLAYOUT_H
 
-#include "CalendarsRepository.h"
+#include "../../BusinessLogicLayer/CalendarsRepository/CalendarsRepository.h"
 
 #include <QLabel>
 #include <QTreeWidget>

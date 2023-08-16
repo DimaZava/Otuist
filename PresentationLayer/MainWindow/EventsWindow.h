@@ -4,10 +4,10 @@
 #include <QMainWindow>
 #include <QSplitter>
 
-#include "CalendarWidget.h"
-#include "CalendarsRepository.h" // remove if not needed
-#include "CalendarsScrollWidget.h"
-#include "EventsScrollWidget.h"
+#include "../../BusinessLogicLayer/CalendarsRepository/CalendarsRepository.h" // remove if not needed
+#include "../Calendar/CalendarWidget.h"
+#include "../Calendar/CalendarsScrollWidget.h"
+#include "../Events/EventsScrollWidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class EventsWindow; }
@@ -18,13 +18,15 @@ class EventsWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit EventsWindow(const std::shared_ptr<CalendarsRepository>& calendarsRepository, QWidget* parent = nullptr);
+    explicit EventsWindow(QWidget* parent = nullptr);
     ~EventsWindow() override;
 
     void readPositionSizeSettings();
 
 private:
     Ui::EventsWindow *ui;
+    std::shared_ptr<CalendarsRepository> calendarsRepository;
+
     std::unique_ptr<QSplitter> mainContentLayout;
     std::unique_ptr<QSplitter> eventsContentLayout;
     std::unique_ptr<CalendarsScrollWidget> calendarsScrollWidget;

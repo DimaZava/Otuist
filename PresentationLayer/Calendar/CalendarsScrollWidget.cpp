@@ -1,6 +1,6 @@
 #include "CalendarsScrollWidget.h"
 
-#include "InterfaceUtils.h"
+#include "../InterfaceUtils.h"
 
 CalendarsScrollWidget::CalendarsScrollWidget(
     const std::shared_ptr<CalendarsRepository>& calendarsRepository,
@@ -14,6 +14,7 @@ CalendarsScrollWidget::CalendarsScrollWidget(
 
 CalendarsScrollWidget::~CalendarsScrollWidget()
 {
+    qDebug() << __PRETTY_FUNCTION__;
     calendarsLayoutContainer.reset();
     calendarsLayout.reset();
 }

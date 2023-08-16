@@ -1,17 +1,21 @@
 #include "EventsScrollWidget.h"
 
-#include "InterfaceUtils.h"
+#include "../InterfaceUtils.h"
 
-EventsScrollWidget::EventsScrollWidget(Subject<std::set<std::shared_ptr<CalendarEvent>>>& subject, QWidget* parent)
+EventsScrollWidget::EventsScrollWidget(
+    const std::shared_ptr<CalendarsRepository>& calendarsRepository,
+    ISubject<CalendarSelectionDTO>& calendarSubject,
+    QWidget* parent)
     : QScrollArea(parent)
     , eventsLayoutContainer(std::make_unique<QWidget>(this))
-    , eventsLayout(std::make_unique<EventsLayout>(subject, eventsLayoutContainer.get()))
+    , eventsLayout(std::make_unique<EventsLayout>(calendarsRepository, calendarSubject, eventsLayoutContainer.get()))
 {
     configureLayout();
 }
 
 EventsScrollWidget::~EventsScrollWidget()
 {
+    qDebug() << __PRETTY_FUNCTION__;
     eventsLayoutContainer.reset();
     eventsLayout.reset();
 }

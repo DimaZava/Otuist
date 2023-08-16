@@ -5,39 +5,39 @@
 #include <vector>
 
 template <typename T>
-class Observer
+class IObserver
 {
 public:
-    virtual ~Observer() = default;
-    virtual void notify(const T& value) = 0;
+    virtual ~IObserver() = default;
+    virtual void didChange(const T& value) = 0;
 };
 
 template <typename T>
-class Subject
+class ISubject
 {
 public:
-    virtual ~Subject() = default;
+    virtual ~ISubject() = default;
 
-    void addObserver(Observer<T>* observer)
+    void addObserver(IObserver<T>* observer)
     {
         observers.push_back(observer);
     }
 
-    void removeObserver(Observer<T>* observer)
+    void removeObserver(IObserver<T>* observer)
     {
         observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
     }
 
     void notify(const T& value)
     {
-        for (Observer<T>* observer : observers)
+        for (IObserver<T>* observer : observers)
         {
-            observer->notify(value);
+            observer->didChange(value);
         }
     }
 
 private:
-    std::vector<Observer<T>*> observers;
+    std::vector<IObserver<T>*> observers;
 };
 
 #endif // OBSERVER_H

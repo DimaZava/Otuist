@@ -29,7 +29,10 @@ CalendarEvent::CalendarEvent(CalendarEvent&& event) noexcept
     , description(std::exchange(event.description, nullptr))
 {}
 
-CalendarEvent::~CalendarEvent() {}
+CalendarEvent::~CalendarEvent()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+}
 
 CalendarEvent& CalendarEvent::operator=(const CalendarEvent& other)
 {

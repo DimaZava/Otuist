@@ -22,6 +22,9 @@ void CalendarWidget::performInitialSetup()
 
     connect(this, &QCalendarWidget::clicked, this, &CalendarWidget::selectDateRange);
     dateTextFormat();
+
+    // Force to highlight and show events data
+    selectDateRange(selectedDate());
 }
 
 void CalendarWidget::selectDateRange(QDate date)
@@ -38,6 +41,7 @@ void CalendarWidget::selectDateRange(QDate date)
         this->beginDate = date;
         this->endDate = std::nullopt;
     }
+    notify({this->beginDate, this->endDate});
 }
 
 void CalendarWidget::highlightRange(QTextCharFormat format)

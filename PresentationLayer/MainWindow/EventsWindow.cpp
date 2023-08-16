@@ -1,30 +1,34 @@
 #include "EventsWindow.h"
 #include "./ui_EventsWindow.h"
 
-#include "CommonUtils.h"
-#include "InterfaceUtils.h"
+#include "../../BusinessLogicLayer/CommonUtils/CommonUtils.h"
+#include "../InterfaceUtils.h"
 
 #include <QGuiApplication>
 #include <QPalette>
 #include <QScreen>
 #include <QStyle>
 
-EventsWindow::EventsWindow(const std::shared_ptr<CalendarsRepository>& calendarsRepository, QWidget* parent)
+EventsWindow::EventsWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::EventsWindow)
+    , calendarsRepository(std::make_shared<CalendarsRepository>())
     , mainContentLayout(std::make_unique<QSplitter>(parent))
     , eventsContentLayout(std::make_unique<QSplitter>(mainContentLayout.get()))
     , calendarsScrollWidget(std::make_unique<CalendarsScrollWidget>(calendarsRepository, mainContentLayout.get()))
     , calendarWidget(std::make_unique<CalendarWidget>())
-    , eventsScrollWidget(std::make_unique<EventsScrollWidget>(*calendarsRepository, eventsContentLayout.get()))
+    , eventsScrollWidget(
+          std::make_unique<EventsScrollWidget>(calendarsRepository, *calendarWidget, eventsContentLayout.get()))
 {
     ui->setupUi(this);
     configureLayout();
     setupInitialState();
+    calendarsRepository->reloadEvents();
 }
 
 EventsWindow::~EventsWindow()
 {
+    qDebug() << __PRETTY_FUNCTION__;
     mainContentLayout.reset();
     eventsContentLayout.reset();
     calendarsScrollWidget.reset();

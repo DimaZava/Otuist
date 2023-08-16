@@ -4,8 +4,8 @@
 #include <set>
 #include <string>
 
-#include "CalendarEvent.h"
-#include "NamedObjectInterface.h"
+#include "../CalendarEvent/CalendarEvent.h"
+#include "../NamedObjectInterface.h"
 
 class CalendarItem : NamedObjectInterface
 {
@@ -13,14 +13,14 @@ public:
     CalendarItem(
         const std::string& name,
         const std::set<std::string>& categories,
-        const std::set<CalendarEvent>& events = {});
+        const std::set<std::shared_ptr<CalendarEvent>>& events = {});
     CalendarItem(const CalendarItem& calendar);
     CalendarItem(CalendarItem&& calendar) noexcept;
     ~CalendarItem() override;
 
     std::string getName() const override;
     std::set<std::string> getCategories() const;
-    std::set<CalendarEvent> getEvents() const;
+    std::set<std::shared_ptr<CalendarEvent>> getEvents() const;
 
     std::string getUuid() const;
 
@@ -31,7 +31,7 @@ private:
     std::string uuid;
     std::string name;
     std::set<std::string> categories;
-    std::set<CalendarEvent> events;
+    std::set<std::shared_ptr<CalendarEvent>> events;
 };
 
 #endif // CALENDARITEM_H

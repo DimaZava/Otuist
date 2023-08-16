@@ -1,10 +1,9 @@
-#include "EventsWindow.h"
+#include "BusinessLogicLayer/CommonUtils/CommonUtils.h"
+#include "PresentationLayer/MainWindow/EventsWindow.h"
 
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
-
-#include "CommonUtils.h"
 
 int main(int argc, char *argv[])
 {
@@ -21,9 +20,7 @@ int main(int argc, char *argv[])
     }
     CommonUtils::performSetup();
 
-    // TODO:
-    // Replace with service locator?
-    EventsWindow w{std::shared_ptr<CalendarsRepository>{new CalendarsRepository}};
+    EventsWindow w;
     w.readPositionSizeSettings();
     w.show();
     return a.exec();

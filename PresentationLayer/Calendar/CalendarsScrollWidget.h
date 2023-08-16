@@ -1,8 +1,8 @@
 #ifndef CALENDARSSCROLLWIDGET_H
 #define CALENDARSSCROLLWIDGET_H
 
+#include "../../BusinessLogicLayer/CalendarsRepository/CalendarsRepository.h"
 #include "CalendarsLayout.h"
-#include "CalendarsRepository.h"
 
 #include <QScrollArea>
 #include <QVBoxLayout>

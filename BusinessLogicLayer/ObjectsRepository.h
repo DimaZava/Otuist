@@ -9,7 +9,7 @@
 #include <string>
 #include <type_traits>
 
-#include "NamedObjectInterface.h"
+#include "../ModelsLayer/NamedObjectInterface.h"
 
 template <
     typename T,

@@ -1,8 +1,9 @@
 #ifndef EVENTSSCROLLWIDGET_H
 #define EVENTSSCROLLWIDGET_H
 
+#include "../../BusinessLogicLayer/Observer.h"
+#include "../../PresentationLayer/Calendar/CalendarWidget.h"
 #include "EventsLayout.h"
-#include "Observer.h"
 
 #include <QScrollArea>
 #include <QVBoxLayout>
@@ -12,7 +13,10 @@ class EventsScrollWidget : public QScrollArea
 {
     Q_OBJECT
 public:
-    explicit EventsScrollWidget(Subject<std::set<std::shared_ptr<CalendarEvent>>>& subject, QWidget* parent = nullptr);
+    explicit EventsScrollWidget(
+        const std::shared_ptr<CalendarsRepository>& calendarsRepository,
+        ISubject<CalendarSelectionDTO>& calendarSubject,
+        QWidget* parent = nullptr);
     ~EventsScrollWidget() override;
 
 private:

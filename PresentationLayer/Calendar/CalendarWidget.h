@@ -1,7 +1,7 @@
 #ifndef CALENDARWIDGET_H
 #define CALENDARWIDGET_H
 
-#include "Observer.h"
+#include "../../BusinessLogicLayer/Observer.h"
 
 #include <QCalendarWidget>
 #include <QPainter>
@@ -16,7 +16,7 @@ struct CalendarSelectionDTO
 
 class CalendarWidget
     : public QCalendarWidget
-    , public Subject<CalendarSelectionDTO>
+    , public ISubject<CalendarSelectionDTO>
 {
     Q_OBJECT
 public:

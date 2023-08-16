@@ -3,7 +3,7 @@
 CalendarItem::CalendarItem(
     const std::string& name,
     const std::set<std::string>& categories,
-    const std::set<CalendarEvent>& events)
+    const std::set<std::shared_ptr<CalendarEvent>>& events)
     : uuid(std::to_string(std::rand()))
     , name(name)
     , categories(categories)
@@ -29,7 +29,10 @@ CalendarItem::CalendarItem(CalendarItem&& calendar) noexcept
     calendar.events.clear();
 }
 
-CalendarItem::~CalendarItem() {}
+CalendarItem::~CalendarItem()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+}
 
 std::string CalendarItem::getUuid() const
 {
@@ -41,7 +44,7 @@ std::string CalendarItem::getName() const
     return name;
 }
 
-std::set<CalendarEvent> CalendarItem::getEvents() const
+std::set<std::shared_ptr<CalendarEvent>> CalendarItem::getEvents() const
 {
     return events;
 }
