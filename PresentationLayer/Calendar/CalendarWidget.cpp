@@ -34,13 +34,16 @@ void CalendarWidget::selectDateRange(QDate date)
     if (qApp->keyboardModifiers() & Qt::ShiftModifier && beginDate.has_value())
     {
         this->endDate = date;
+        if (date < this->beginDate.value())
+            std::swap(this->beginDate, this->endDate);
         highlightRange(*highlighter);
     }
     else
     {
         this->beginDate = date;
-        this->endDate = std::nullopt;
+        this->endDate = date;
     }
+
     notify({this->beginDate, this->endDate});
 }
 

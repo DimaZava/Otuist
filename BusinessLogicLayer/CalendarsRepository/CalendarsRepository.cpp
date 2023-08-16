@@ -109,13 +109,6 @@ std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEventsBetweenDa
     const std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime,
     const std::optional<std::set<std::string>> calendarNames) const
 {
-    qDebug() << __PRETTY_FUNCTION__ << " begin";
-
-    if (beginDateTime.has_value())
-        qDebug() << "beginDateTime: " << CommonUtils::Time::stringFromStdChrono(beginDateTime.value());
-    if (endDateTime.has_value())
-        qDebug() << "endDateTime: " << CommonUtils::Time::stringFromStdChrono(endDateTime.value());
-
     std::set<std::shared_ptr<CalendarItem>> connectedCalendars = readObjects();
     if (calendarNames.has_value())
     {
@@ -137,16 +130,12 @@ std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEventsBetweenDa
             bool passedBeginTime = true;
             if (beginDateTime.has_value())
             {
-                qDebug() << CommonUtils::Time::stringFromStdChrono(event->getBeginDateTime());
                 passedBeginTime = event->getBeginDateTime() >= beginDateTime.value();
             }
 
             bool passedEndTime = true;
             if (endDateTime.has_value())
             {
-                if (event->getEndDateTime().has_value())
-                    qDebug() << CommonUtils::Time::stringFromStdChrono(event->getEndDateTime().value());
-
                 passedEndTime =
                     event->getEndDateTime().has_value() && event->getEndDateTime().value() <= endDateTime.value() ||
                     !event->getEndDateTime().has_value();
@@ -155,6 +144,5 @@ std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEventsBetweenDa
             });
         collectedEvents.insert(result.begin(), result.end());
     }
-    qDebug() << __PRETTY_FUNCTION__ << " finish";
     return collectedEvents;
 }
