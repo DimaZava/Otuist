@@ -51,7 +51,7 @@ void EventWidget::removeButtonDidClick(bool checked) const
 {
     const int ret = InterfaceUtils::showConfirmationAlert(
         tr("Delete Event"),
-        tr("Are you sure you want to remove event?"),
+        tr("Are you really want to remove event?"),
         QMessageBox::Ok | QMessageBox::Cancel,
         QMessageBox::Ok);
 
