@@ -18,6 +18,7 @@ EventsLayout::EventsLayout(
 EventsLayout::~EventsLayout()
 {
     qDebug() << __PRETTY_FUNCTION__;
+    calendarsRepository->removeObserver(this);
     cleanItems();
 }
 

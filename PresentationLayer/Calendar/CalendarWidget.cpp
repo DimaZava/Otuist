@@ -10,14 +10,28 @@ CalendarWidget::CalendarWidget(const std::shared_ptr<CalendarsRepository>& calen
     : QCalendarWidget()
     , calendarsRepository(calendarsRepository)
     , highlighter(std::make_unique<QTextCharFormat>())
+    , currentMonth(QDate::currentDate().month())
 {
+    calendarsRepository->addObserver(this);
     performInitialSetup();
+}
+
+CalendarWidget::~CalendarWidget()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    calendarsRepository->removeObserver(this);
+}
+
+void CalendarWidget::didChange(const std::set<std::shared_ptr<CalendarEvent>>& value)
+{
+    updateCells();
 }
 
 void CalendarWidget::performInitialSetup()
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &QCalendarWidget::customContextMenuRequested, this, &CalendarWidget::provideContextMenu);
+    connect(this, &QCalendarWidget::currentPageChanged, this, &CalendarWidget::currentPageDidChange);
 
     highlighter->setBackground(palette().brush(QPalette::Highlight));
     highlighter->setForeground(palette().brush(QPalette::HighlightedText));
@@ -174,15 +188,75 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
     }
 }
 
+void CalendarWidget::currentPageDidChange(int year, int month)
+{
+    currentMonth = month;
+}
+
 void CalendarWidget::paintCell(QPainter* painter, const QRect& rect, QDate date) const
 {
-    QCalendarWidget::paintCell(painter, rect, date);
-    // draw calendar cell marks
-    // add list?
+    // QCalendarWidget::paintCell(painter, rect, date);
+
+    auto beginDate = CommonUtils::Time::stdChronoTimePointFromQDate(date);
+    auto endDate = CommonUtils::Time::endOfDate(beginDate);
+    auto events = calendarsRepository->getEvents(beginDate, endDate, false);
+    size_t eventsSize = events.size();
+
+    QPen bordersPen = QPen(QColor{64, 64, 64});
+    bordersPen.setWidth(1);
+
+    QPen datePen = QPen(Qt::white);
+    bordersPen.setWidth(1);
+
+    QPen nonCurrentMonthDatePen = QPen(QColor{64, 64, 64});
+    bordersPen.setWidth(1);
+
+    QPen eventsCounterPen = QPen(Qt::lightGray);
+    eventsCounterPen.setWidth(1);
+    QRect eventsCounterRect{rect};
+    eventsCounterRect.adjust(0, 0, -eventsCounterRect.width() + 20, -eventsCounterRect.height() + 20);
+
+    int centerTextDimension = 20;
+    QBrush todayIndicatorBrush = QBrush(Qt::red);
+    QRect dateRect{rect};
+    dateRect.adjust(
+        dateRect.width() / 2 - centerTextDimension / 2 + 1, // Magical adjustment, highly likely caused by pen width
+        dateRect.height() / 2 - centerTextDimension / 2 + 1,
+        -dateRect.width() / 2 + centerTextDimension / 2 + 1,
+        -dateRect.height() / 2 + centerTextDimension / 2 + 1);
 
     painter->save();
-    painter->drawRect(rect.x(), rect.y(), 15, 15);
-    painter->fillRect(rect.x(), rect.y(), 15, 15, Qt::red);
-    painter->drawText(rect, Qt::TextSingleLine | Qt::AlignCenter, QString::number(date.day()));
+    {
+        painter->setPen(bordersPen);
+        painter->setBrush(Qt::NoBrush);
+        painter->drawRect(rect);
+
+        if (eventsSize > 0)
+        {
+            painter->setPen(eventsCounterPen);
+            painter->drawRect(eventsCounterRect);
+            painter->drawText(
+                eventsCounterRect, Qt::TextSingleLine | Qt::AlignCenter, "+" + QString::number(events.size()));
+        }
+    }
+    painter->restore();
+
+    painter->save();
+    {
+        if (date == QDate::currentDate())
+        {
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(todayIndicatorBrush);
+            painter->drawEllipse(dateRect.center(), centerTextDimension / 2, centerTextDimension / 2);
+        }
+
+        if (date.month() == currentMonth)
+            painter->setPen(datePen);
+        else
+            painter->setPen(nonCurrentMonthDatePen);
+        painter->setBrush(Qt::NoBrush);
+
+        painter->drawText(rect, Qt::TextSingleLine | Qt::AlignCenter, QString::number(date.day()));
+    }
     painter->restore();
 }

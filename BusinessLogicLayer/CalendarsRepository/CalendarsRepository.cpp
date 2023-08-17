@@ -135,9 +135,11 @@ void CalendarsRepository::removeEvent(const std::shared_ptr<CalendarEvent>& even
 
 std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEvents(
     const std::chrono::time_point<std::chrono::system_clock> beginDateTime,
-    const std::chrono::time_point<std::chrono::system_clock> endDateTime)
+    const std::chrono::time_point<std::chrono::system_clock> endDateTime,
+    bool shouldUpdateActiveDatesFrame)
 {
-    activeDatesFrame.updateDates(beginDateTime, endDateTime);
+    if (shouldUpdateActiveDatesFrame)
+        activeDatesFrame.updateDates(beginDateTime, endDateTime);
     return getEventsBetweenDatesForCalendars(beginDateTime, endDateTime);
 }
 
