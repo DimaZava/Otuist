@@ -16,8 +16,6 @@ EventsScrollWidget::EventsScrollWidget(
 EventsScrollWidget::~EventsScrollWidget()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    eventsLayoutContainer.reset();
-    eventsLayout.reset();
 }
 
 void EventsScrollWidget::configureLayout()

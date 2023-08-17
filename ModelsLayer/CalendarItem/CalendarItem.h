@@ -55,6 +55,7 @@ public:
     std::string getName() const override;
     std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator> getCategories() const;
     void addEvent(const std::shared_ptr<CalendarEvent>& event);
+    void removeEvent(const std::shared_ptr<CalendarEvent>& event);
     std::set<std::shared_ptr<CalendarEvent>> getEvents() const;
 
     std::string getUuid() const;

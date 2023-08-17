@@ -22,14 +22,12 @@ std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::stdChronoT
     std::tm time = {};
     std::istringstream ss{date.toString(qDateTimeFormat).toStdString()};
     ss >> std::get_time(&time, dateTimeFormat);
-    qDebug() << ss.str();
     auto utc_time_point = std::chrono::system_clock::from_time_t(std::mktime(&time));
 
     std::time_t utc_time_t = std::chrono::system_clock::to_time_t(utc_time_point);
     std::tm* local_tm = std::localtime(&utc_time_t);
     auto local_time_point = std::chrono::system_clock::from_time_t(std::mktime(local_tm));
 
-    qDebug() << CommonUtils::Time::stringFromStdChrono(local_time_point);
     return local_time_point;
 }
 
@@ -38,14 +36,12 @@ std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::stdChronoT
     std::tm time = {};
     std::istringstream ss{date.toString(qDateFormat).toStdString()};
     ss >> std::get_time(&time, dateFormat);
-    qDebug() << ss.str();
     auto utc_time_point = std::chrono::system_clock::from_time_t(std::mktime(&time));
 
     std::time_t utc_time_t = std::chrono::system_clock::to_time_t(utc_time_point);
     std::tm* local_tm = std::localtime(&utc_time_t);
     auto local_time_point = std::chrono::system_clock::from_time_t(std::mktime(local_tm));
 
-    qDebug() << CommonUtils::Time::stringFromStdChrono(local_time_point);
     return local_time_point;
 }
 
@@ -69,14 +65,12 @@ std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::beginOfDat
     auto current_date = std::chrono::floor<std::chrono::days>(date);
     auto beginning_of_day = current_date.time_since_epoch();
     auto time_point = std::chrono::time_point<std::chrono::system_clock>{beginning_of_day};
-    qDebug() << CommonUtils::Time::stringFromStdChrono(time_point);
     return time_point;
 }
 
 std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::endOfDate(
     std::chrono::time_point<std::chrono::system_clock> date)
 {
-    qDebug() << CommonUtils::Time::stringFromStdChrono(date);
     std::time_t current_time_t = std::chrono::system_clock::to_time_t(date);
     std::tm* current_date = std::localtime(&current_time_t);
     current_date->tm_hour = 23;
@@ -84,7 +78,6 @@ std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::endOfDate(
     current_date->tm_sec = 59;
 
     auto endOfDay = std::chrono::system_clock::from_time_t(std::mktime(current_date));
-    qDebug() << CommonUtils::Time::stringFromStdChrono(endOfDay);
 
     return endOfDay;
 }

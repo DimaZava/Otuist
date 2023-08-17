@@ -2,8 +2,6 @@
 #include "../../BusinessLogicLayer/CommonUtils/CommonUtils.h"
 #include "../InterfaceUtils.h"
 
-#include <QLabel>
-
 EventsLayout::EventsLayout(
     const std::shared_ptr<CalendarsRepository>& calendarsRepository,
     ISubject<CalendarSelectionDTO>& calendarSubject,
@@ -20,6 +18,7 @@ EventsLayout::EventsLayout(
 EventsLayout::~EventsLayout()
 {
     qDebug() << __PRETTY_FUNCTION__;
+    cleanItems();
 }
 
 void EventsLayout::configureLayout()
@@ -60,36 +59,35 @@ void EventsLayout::didChange(const CalendarSelectionDTO& value)
 
 void EventsLayout::reloadData()
 {
-    QListWidgetItem* item;
-    while ((item = eventsList->item(0)) != nullptr)
-    {
-        delete item;
-    }
+    cleanItems();
 
     for (const auto& event : calendarEvents)
     {
         QListWidgetItem* newItem = new QListWidgetItem;
-        QLabel* eventLabel = new QLabel;
-        std::string eventString;
-        eventString += "Name: " + event->getName() + "\n";
-        eventString += "CalendarName: " + event->getCalendarName() + "\n";
-        eventString += "Category: " + event->getCategory() + "\n";
-        eventString += "Begin Date: " + CommonUtils::Time::stringFromStdChrono(event->getBeginDateTime()) + "\n";
-        if (event->getEndDateTime().has_value())
-        {
-            eventString +=
-                "End Date: " + CommonUtils::Time::stringFromStdChrono(event->getEndDateTime().value()) + "\n";
-        }
-        eventString += "Description: " + event->getDescription().value_or("N/A") + "\n";
-        eventString += "----------\n";
+        EventWidget* eventWidget = new EventWidget{event};
 
-        // tmp->setContentsMargins(InterfaceUtils::zeroMargins);
-        // tmp->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-        eventLabel->setText(eventString.c_str());
-        // eventLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+        eventWidget->delegate = this;
 
-        newItem->setSizeHint(eventLabel->sizeHint());
+        newItem->setSizeHint(eventWidget->sizeHint());
         eventsList->addItem(newItem);
-        eventsList->setItemWidget(newItem, eventLabel);
+        eventsList->setItemWidget(newItem, eventWidget);
     }
+}
+
+void EventsLayout::cleanItems()
+{
+    QListWidgetItem* item;
+    while ((item = eventsList->item(0)) != nullptr)
+    {
+        EventWidget* eventWidget = dynamic_cast<EventWidget*>(eventsList->itemWidget(item));
+        eventWidget->delegate = nullptr;
+        delete item;
+    }
+}
+
+// EventsWidgetDelegate
+
+void EventsLayout::removeEventButtonDidClick(const std::shared_ptr<CalendarEvent>& event)
+{
+    calendarsRepository->removeEvent(event);
 }

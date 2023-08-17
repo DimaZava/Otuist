@@ -15,8 +15,6 @@ CalendarsScrollWidget::CalendarsScrollWidget(
 CalendarsScrollWidget::~CalendarsScrollWidget()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    calendarsLayoutContainer.reset();
-    calendarsLayout.reset();
 }
 
 void CalendarsScrollWidget::configureLayout()

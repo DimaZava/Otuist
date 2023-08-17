@@ -59,6 +59,15 @@ void CalendarItem::addEvent(const std::shared_ptr<CalendarEvent>& event)
     events.insert(event);
 }
 
+void CalendarItem::removeEvent(const std::shared_ptr<CalendarEvent>& event)
+{
+    auto it = events.find(event);
+    if (it != events.end())
+    {
+        events.erase(it);
+    }
+}
+
 CalendarItem& CalendarItem::operator=(const CalendarItem& other)
 {
     uuid = other.uuid;

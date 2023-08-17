@@ -21,14 +21,7 @@ AddEventDialog::AddEventDialog(
 
 AddEventDialog::~AddEventDialog()
 {
-    formLayout.reset();
-    nameTextEdit.reset();
-    calendarNameTextEdit.reset();
-    categoryNameTextEdit.reset();
-    beginDateTimePicker.reset();
-    endDateTimePicker.reset();
-    descriptionTextEdit.reset();
-    saveButton.reset();
+    qDebug() << __PRETTY_FUNCTION__;
 }
 
 AddEventDialogDTO AddEventDialog::getReturnValue()

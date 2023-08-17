@@ -29,10 +29,6 @@ EventsWindow::EventsWindow(QWidget* parent)
 EventsWindow::~EventsWindow()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    mainContentLayout.reset();
-    eventsContentLayout.reset();
-    calendarsScrollWidget.reset();
-    calendarWidget.reset();
     delete ui;
 }
 

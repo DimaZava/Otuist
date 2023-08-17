@@ -64,13 +64,6 @@ CalendarsRepository::CalendarsRepository(){
 CalendarsRepository::~CalendarsRepository()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    auto connectedCalendars = readObjects();
-    while (!connectedCalendars.empty())
-    {
-        auto ptr = (*connectedCalendars.begin());
-        ptr.reset();
-        connectedCalendars.erase(connectedCalendars.begin());
-    }
 }
 
 // Calendars CRUD
@@ -127,10 +120,16 @@ void CalendarsRepository::setCalendarsCategoryActive(
 
 // Events CRUD
 
-void CalendarsRepository::addEvent(const std::shared_ptr<CalendarEvent>& event)
+void CalendarsRepository::addEvent(const std::shared_ptr<CalendarEvent>& event) const
 {
     auto calendar = getCalendar(event->getCalendarName())->get();
     calendar->addEvent(event);
+    reloadEvents();
+}
+void CalendarsRepository::removeEvent(const std::shared_ptr<CalendarEvent>& event) const
+{
+    auto calendar = getCalendar(event->getCalendarName())->get();
+    calendar->removeEvent(event);
     reloadEvents();
 }
 
