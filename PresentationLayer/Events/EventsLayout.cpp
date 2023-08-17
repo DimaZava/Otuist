@@ -2,15 +2,15 @@
 #include "../../BusinessLogicLayer/CommonUtils/CommonUtils.h"
 #include "../InterfaceUtils.h"
 
-#include <optional>
+#include <QLabel>
 
 EventsLayout::EventsLayout(
     const std::shared_ptr<CalendarsRepository>& calendarsRepository,
     ISubject<CalendarSelectionDTO>& calendarSubject,
     QWidget* parent)
     : QVBoxLayout(parent)
+    , eventsList(std::make_unique<QListWidget>())
     , calendarsRepository(calendarsRepository)
-    , tmp(new QTextEdit{"test"})
 {
     calendarsRepository->addObserver(this);
     calendarSubject.addObserver(this);
@@ -24,9 +24,9 @@ EventsLayout::~EventsLayout()
 
 void EventsLayout::configureLayout()
 {
-    tmp->setContentsMargins(InterfaceUtils::zeroMargins);
-    tmp->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    addWidget(tmp);
+    eventsList->setContentsMargins(InterfaceUtils::zeroMargins);
+    eventsList->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    addWidget(eventsList.get());
 }
 
 void EventsLayout::setCalendarEvents(const std::set<std::shared_ptr<CalendarEvent>>& calendarEvents)
@@ -60,9 +60,16 @@ void EventsLayout::didChange(const CalendarSelectionDTO& value)
 
 void EventsLayout::reloadData()
 {
-    tmp->clear();
+    QListWidgetItem* item;
+    while ((item = eventsList->item(0)) != nullptr)
+    {
+        delete item;
+    }
+
     for (const auto& event : calendarEvents)
     {
+        QListWidgetItem* newItem = new QListWidgetItem;
+        QLabel* eventLabel = new QLabel;
         std::string eventString;
         eventString += "Name: " + event->getName() + "\n";
         eventString += "CalendarName: " + event->getCalendarName() + "\n";
@@ -76,8 +83,13 @@ void EventsLayout::reloadData()
         eventString += "Description: " + event->getDescription().value_or("N/A") + "\n";
         eventString += "----------\n";
 
-        auto qString = tmp->toPlainText();
-        qString += eventString;
-        tmp->setText(qString);
+        // tmp->setContentsMargins(InterfaceUtils::zeroMargins);
+        // tmp->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+        eventLabel->setText(eventString.c_str());
+        // eventLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+        newItem->setSizeHint(eventLabel->sizeHint());
+        eventsList->addItem(newItem);
+        eventsList->setItemWidget(newItem, eventLabel);
     }
 }

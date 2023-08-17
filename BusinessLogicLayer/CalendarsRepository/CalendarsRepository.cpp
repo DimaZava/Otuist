@@ -173,13 +173,9 @@ std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEventsBetweenDa
         auto activeActualEventsFilter = [&activeActualEvents, &beginDateTime, &endDateTime, &activeCategoryNames](
                                             const std::shared_ptr<CalendarEvent>& event) {
             bool passedBeginTime = event->getBeginDateTime() >= beginDateTime;
-            bool isPassedSingleDayEvent = false;
 
-            if (!event->getEndDateTime().has_value() &&
-                CommonUtils::Time::isBetweenDates(event->getBeginDateTime(), beginDateTime, endDateTime))
-            {
-                isPassedSingleDayEvent = true;
-            }
+            bool isPassedSingleDayEvent = !event->getEndDateTime().has_value() &&
+                CommonUtils::Time::isBetweenDates(event->getBeginDateTime(), beginDateTime, endDateTime);
 
             bool passedEndTime = !event->getEndDateTime().has_value() && isPassedSingleDayEvent ||
                 event->getEndDateTime().has_value() && event->getEndDateTime().value() <= endDateTime;

@@ -6,7 +6,7 @@
 #include "../../ModelsLayer/CalendarEvent/CalendarEvent.h"
 #include "../../PresentationLayer/Calendar/CalendarWidget.h"
 
-#include <QTextEdit> // todo: remove when not needed
+#include <QListWidget>
 #include <QVBoxLayout>
 #include <set>
 
@@ -28,7 +28,7 @@ public:
     void didChange(const CalendarSelectionDTO& value) override;
 
 private:
-    QTextEdit* tmp;
+    const std::unique_ptr<QListWidget> eventsList;
     const std::shared_ptr<CalendarsRepository> calendarsRepository;
     std::set<std::shared_ptr<CalendarEvent>> calendarEvents;
 

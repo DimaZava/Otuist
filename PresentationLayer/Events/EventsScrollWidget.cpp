@@ -28,5 +28,5 @@ void EventsScrollWidget::configureLayout()
     setWidget(eventsLayoutContainer.get());
 
     eventsLayout->setSizeConstraint(QLayout::SetMaximumSize);
-    eventsLayout->setContentsMargins(InterfaceUtils::defaultMargins);
+    eventsLayout->setContentsMargins(InterfaceUtils::zeroMargins);
 }

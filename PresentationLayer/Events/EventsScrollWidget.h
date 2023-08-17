@@ -5,8 +5,8 @@
 #include "../../PresentationLayer/Calendar/CalendarWidget.h"
 #include "EventsLayout.h"
 
+#include <QListWidget>
 #include <QScrollArea>
-#include <QVBoxLayout>
 #include <set>
 
 class EventsScrollWidget : public QScrollArea
