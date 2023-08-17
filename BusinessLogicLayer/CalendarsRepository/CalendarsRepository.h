@@ -48,8 +48,8 @@ public:
     void addEvent(const std::shared_ptr<CalendarEvent>& event) const;
     void removeEvent(const std::shared_ptr<CalendarEvent>& event) const;
     std::set<std::shared_ptr<CalendarEvent>> getEvents(
-        const std::chrono::time_point<std::chrono::system_clock> beginDateTime,
-        const std::chrono::time_point<std::chrono::system_clock> endDateTime,
+        const std::chrono::time_point<std::chrono::system_clock>& beginDateTime,
+        const std::optional<std::chrono::time_point<std::chrono::system_clock>>& endDateTime,
         bool shouldUpdateActiveDatesFrame = true);
     void reloadEvents() const;
 

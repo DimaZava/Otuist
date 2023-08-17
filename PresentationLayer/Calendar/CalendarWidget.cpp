@@ -1,5 +1,6 @@
 #include "CalendarWidget.h"
 #include "../AddEventDialog/AddEventDialog.h"
+#include "../InterfaceUtils.h"
 
 #include <QApplication>
 #include <QMenu>
@@ -148,6 +149,12 @@ std::optional<QDate> CalendarWidget::dateFromPosition(const QPoint& position)
 void CalendarWidget::provideContextMenu(const QPoint& pos)
 {
     QPoint item = this->mapToGlobal(pos);
+    const QTableView* const view = findChild<const QTableView*>();
+    const QModelIndex clickedIndex = view->indexAt(view->viewport()->mapFromGlobal(item));
+
+    if (!clickedIndex.isValid() || clickedIndex.column() == 0 || clickedIndex.row() == 0)
+        return;
+
     QMenu submenu;
 
     submenu.addAction(tr("Add"));
@@ -168,9 +175,6 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
             if (dialog.exec() == QDialog::Accepted)
             {
                 auto addEventDTO = dialog.getReturnValue();
-                qDebug() << &addEventDTO;
-                // Use the return value here
-
                 calendarsRepository->addEvent(std::make_shared<CalendarEvent>(
                     addEventDTO.name,
                     addEventDTO.calendarName,
@@ -181,10 +185,27 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
             }
         }
     }
-    else if (rightClickItem->text() == tr("Delete"))
+    else if (rightClickItem->text() == tr("Delete All"))
     {
         auto deleteDate = dateFromPosition(item);
-        qDebug() << tr("Delete") << deleteDate.value().toString();
+        // calendarsRepository->getEvents(deleteDate, CommonUtils::Time::);
+
+        const int ret = InterfaceUtils::showConfirmationAlert(
+            tr("Delete Events"),
+            tr("You sure you want to delete all %1 event").arg(1),
+            QMessageBox::Ok | QMessageBox::Cancel,
+            QMessageBox::Ok);
+
+        switch (ret)
+        {
+            case QMessageBox::Ok:
+                qDebug() << "Ok";
+                break;
+            case QMessageBox::Cancel:
+                break;
+            default:
+                static_assert(true, "Unexpected condition");
+        }
     }
 }
 
@@ -193,31 +214,58 @@ void CalendarWidget::currentPageDidChange(int year, int month)
     currentMonth = month;
 }
 
-void CalendarWidget::paintCell(QPainter* painter, const QRect& rect, QDate date) const
+const QPen CalendarWidget::bordersPen()
 {
-    // QCalendarWidget::paintCell(painter, rect, date);
-
-    auto beginDate = CommonUtils::Time::stdChronoTimePointFromQDate(date);
-    auto endDate = CommonUtils::Time::endOfDate(beginDate);
-    auto events = calendarsRepository->getEvents(beginDate, endDate, false);
-    size_t eventsSize = events.size();
-
     QPen bordersPen = QPen(QColor{64, 64, 64});
     bordersPen.setWidth(1);
+    return bordersPen;
+}
 
+const QPen CalendarWidget::datePen(QPen bordersPen)
+{
     QPen datePen = QPen(Qt::white);
     bordersPen.setWidth(1);
+    return datePen;
+}
 
+const QPen CalendarWidget::nonCurrentMonthDatePen()
+{
     QPen nonCurrentMonthDatePen = QPen(QColor{64, 64, 64});
-    bordersPen.setWidth(1);
+    nonCurrentMonthDatePen.setWidth(1);
+    return nonCurrentMonthDatePen;
+}
 
+const QPen CalendarWidget::eventsCounterPen()
+{
     QPen eventsCounterPen = QPen(Qt::lightGray);
     eventsCounterPen.setWidth(1);
+    return eventsCounterPen;
+}
+
+const QBrush CalendarWidget::todayIndicatorBrush()
+{
+    QBrush todayIndicatorBrush = QBrush(Qt::red);
+    return todayIndicatorBrush;
+}
+
+void CalendarWidget::paintCell(QPainter* painter, const QRect& rect, QDate date) const
+{
+    QCalendarWidget::paintCell(painter, rect, date);
+
+    const auto beginDate = CommonUtils::Time::stdChronoTimePointFromQDate(date);
+    const auto events = calendarsRepository->getEvents(beginDate, std::nullopt, false);
+    const size_t eventsSize = events.size();
+
+    const QPen bordersPen = CalendarWidget::bordersPen();
+    const QPen datePen = CalendarWidget::datePen(bordersPen);
+    const QPen nonCurrentMonthDatePen = CalendarWidget::nonCurrentMonthDatePen();
+
+    const QPen eventsCounterPen = CalendarWidget::eventsCounterPen();
     QRect eventsCounterRect{rect};
     eventsCounterRect.adjust(0, 0, -eventsCounterRect.width() + 20, -eventsCounterRect.height() + 20);
 
-    int centerTextDimension = 20;
-    QBrush todayIndicatorBrush = QBrush(Qt::red);
+    const int centerTextDimension = 20;
+    const QBrush todayIndicatorBrush = CalendarWidget::todayIndicatorBrush();
     QRect dateRect{rect};
     dateRect.adjust(
         dateRect.width() / 2 - centerTextDimension / 2 + 1, // Magical adjustment, highly likely caused by pen width

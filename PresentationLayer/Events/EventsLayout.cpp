@@ -45,12 +45,8 @@ void EventsLayout::didChange(const CalendarSelectionDTO& value)
     std::chrono::time_point<std::chrono::system_clock> beginChronoDate =
         CommonUtils::Time::stdChronoTimePointFromQDate(value.beginDate);
 
-    std::chrono::time_point<std::chrono::system_clock> endChronoDate;
-    if (value.beginDate == value.endDate)
-    {
-        endChronoDate = CommonUtils::Time::endOfDate(beginChronoDate);
-    }
-    else
+    std::optional<std::chrono::time_point<std::chrono::system_clock>> endChronoDate;
+    if (value.beginDate != value.endDate)
     {
         endChronoDate = CommonUtils::Time::endOfDate(CommonUtils::Time::stdChronoTimePointFromQDate(value.endDate));
     }

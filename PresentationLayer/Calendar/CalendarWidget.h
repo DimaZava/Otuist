@@ -40,6 +40,12 @@ private:
     void highlightRange(QTextCharFormat format);
     std::optional<QDate> dateFromPosition(const QPoint& position);
 
+    static const QPen bordersPen();
+    static const QPen datePen(QPen bordersPen);
+    static const QPen nonCurrentMonthDatePen();
+    static const QPen eventsCounterPen();
+    static const QBrush todayIndicatorBrush();
+
 private slots:
     void selectDateRange(QDate date);
     void provideContextMenu(const QPoint& pos);
