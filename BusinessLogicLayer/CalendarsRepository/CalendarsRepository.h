@@ -8,19 +8,19 @@
 
 struct ActiveDatesFrame
 {
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime;
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime;
+    std::chrono::time_point<std::chrono::system_clock> beginDateTime;
+    std::chrono::time_point<std::chrono::system_clock> endDateTime;
 
     ActiveDatesFrame(
-        std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime,
-        std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime)
+        std::chrono::time_point<std::chrono::system_clock> beginDateTime,
+        std::chrono::time_point<std::chrono::system_clock> endDateTime)
         : beginDateTime(beginDateTime)
         , endDateTime(endDateTime)
     {}
 
     void updateDates(
-        const std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime,
-        const std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime)
+        const std::chrono::time_point<std::chrono::system_clock> beginDateTime,
+        const std::chrono::time_point<std::chrono::system_clock> endDateTime)
     {
         this->beginDateTime = beginDateTime;
         this->endDateTime = endDateTime;
@@ -45,9 +45,10 @@ public:
     void setCalendarsCategoryActive(const std::string& calendarName, const std::string& categoryName, bool isActive)
         const;
 
+    void addEvent(const std::shared_ptr<CalendarEvent>& event);
     std::set<std::shared_ptr<CalendarEvent>> getEvents(
-        const std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime = std::nullopt,
-        const std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime = std::nullopt);
+        const std::chrono::time_point<std::chrono::system_clock> beginDateTime,
+        const std::chrono::time_point<std::chrono::system_clock> endDateTime);
     void reloadEvents() const;
 
     CalendarsRepository& operator=(const CalendarsRepository& other) = delete;
@@ -55,8 +56,8 @@ public:
 
 private:
     std::set<std::shared_ptr<CalendarEvent>> getEventsBetweenDatesForCalendars(
-        const std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime = std::nullopt,
-        const std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime = std::nullopt) const;
+        const std::chrono::time_point<std::chrono::system_clock> beginDateTime,
+        const std::chrono::time_point<std::chrono::system_clock> endDateTime) const;
 
     ActiveDatesFrame activeDatesFrame{CommonUtils::Time::beginOfDate(), CommonUtils::Time::endOfDate()};
 };

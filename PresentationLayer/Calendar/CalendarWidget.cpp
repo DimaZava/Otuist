@@ -46,7 +46,9 @@ void CalendarWidget::selectDateRange(QDate date)
         this->endDate = date;
     }
 
-    notify({this->beginDate, this->endDate});
+    if (!this->beginDate.has_value() && !this->endDate.has_value())
+        static_assert(true, "Both dates should have values");
+    notify({this->beginDate.value(), this->endDate.value()});
 }
 
 void CalendarWidget::highlightRange(QTextCharFormat format)
@@ -138,6 +140,9 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
     submenu.addAction(tr("Delete"));
     QAction* rightClickItem = submenu.exec(item);
 
+    if (rightClickItem == nullptr)
+        return;
+
     if (rightClickItem->text() == tr("Add"))
     {
         auto addDate = dateFromPosition(item);
@@ -148,9 +153,17 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
             AddEventDialog dialog(CommonUtils::Time::stdChronoTimePointFromQDate(addDate.value()), std::nullopt, this);
             if (dialog.exec() == QDialog::Accepted)
             {
-                auto tmp = dialog.getReturnValue();
-                qDebug() << &tmp;
+                auto addEventDTO = dialog.getReturnValue();
+                qDebug() << &addEventDTO;
                 // Use the return value here
+
+                calendarsRepository->addEvent(std::make_shared<CalendarEvent>(
+                    addEventDTO.name,
+                    addEventDTO.calendarName,
+                    addEventDTO.category,
+                    addEventDTO.beginDateTime,
+                    addEventDTO.endDateTime,
+                    addEventDTO.description));
             }
         }
     }

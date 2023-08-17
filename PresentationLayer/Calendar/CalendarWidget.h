@@ -11,8 +11,8 @@
 
 struct CalendarSelectionDTO
 {
-    std::optional<QDate> beginDate;
-    std::optional<QDate> endDate;
+    QDate beginDate;
+    QDate endDate;
 };
 
 class CalendarWidget

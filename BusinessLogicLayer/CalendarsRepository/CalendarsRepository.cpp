@@ -9,13 +9,18 @@ CalendarsRepository::CalendarsRepository(){
 
     std::set<std::shared_ptr<CalendarEvent>> events;
     events.insert(std::make_shared<CalendarEvent>(
-        "Event Work 1", "Default", "Work", now, CommonUtils::Time::endOfDate(now), "Some Work Event 1"));
+        "Event Work 1",
+        "Default",
+        "Work",
+        now,
+        std::nullopt,
+        /*CommonUtils::Time::endOfDate(now),*/ "Some Work Event 1"));
     events.insert(std::make_shared<CalendarEvent>(
         "Event Work 2",
         "Default",
         "Work",
         now + std::chrono::hours(10),
-        CommonUtils::Time::endOfDate(now + std::chrono::hours(10)),
+        std::nullopt, // CommonUtils::Time::endOfDate(now + std::chrono::hours(10)),
         "Some Work Event 2"));
 
     events.insert(std::make_shared<CalendarEvent>(
@@ -23,14 +28,14 @@ CalendarsRepository::CalendarsRepository(){
         "Default",
         "Home",
         now + std::chrono::days(1),
-        CommonUtils::Time::endOfDate(now + std::chrono::days(1)),
+        std::nullopt, // CommonUtils::Time::endOfDate(now + std::chrono::days(1)),
         "Some Home Event 1"));
     events.insert(std::make_shared<CalendarEvent>(
         "Event Home 2",
         "Default",
         "Home",
         now + std::chrono::days(1) + std::chrono::hours(10),
-        CommonUtils::Time::endOfDate(now + std::chrono::days(1) + std::chrono::hours(10)),
+        std::nullopt, // CommonUtils::Time::endOfDate(now + std::chrono::days(1) + std::chrono::hours(10)),
         "Some Home Event 2"));
 
     events.insert(std::make_shared<CalendarEvent>(
@@ -38,17 +43,17 @@ CalendarsRepository::CalendarsRepository(){
         "Default",
         "Family",
         now + std::chrono::days(2),
-        CommonUtils::Time::endOfDate(now + std::chrono::days(2)),
+        std::nullopt, // CommonUtils::Time::endOfDate(now + std::chrono::days(2)),
         "Some Family Event 1"));
     events.insert(std::make_shared<CalendarEvent>(
         "Event Family 2",
         "Default",
         "Family",
         now + std::chrono::days(2) + std::chrono::hours(10),
-        CommonUtils::Time::endOfDate(now + std::chrono::days(2) + std::chrono::hours(10)),
+        std::nullopt, // CommonUtils::Time::endOfDate(now + std::chrono::days(2) + std::chrono::hours(10)),
         "Some Family Event 2"));
 
-    std::set<std::shared_ptr<CalendarCategory>> categories;
+    std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator> categories;
     categories.insert(std::make_shared<CalendarCategory>("Work"));
     categories.insert(std::make_shared<CalendarCategory>("Home"));
     categories.insert(std::make_shared<CalendarCategory>("Family"));
@@ -73,7 +78,7 @@ CalendarsRepository::~CalendarsRepository()
 void CalendarsRepository::addCalendar(const std::shared_ptr<CalendarItem>& calendar)
 {
     addObject(calendar);
-    notify(getEvents());
+    reloadEvents();
 }
 
 std::set<std::shared_ptr<CalendarItem>> CalendarsRepository::getCalendars() const
@@ -95,7 +100,7 @@ void CalendarsRepository::updateCalendar(const std::string& name, const std::sha
 void CalendarsRepository::deleteCalendar(const std::string& name)
 {
     deleteObject(name);
-    notify(getEvents());
+    reloadEvents();
 }
 
 void CalendarsRepository::setCalendarsCategoryActive(
@@ -122,9 +127,16 @@ void CalendarsRepository::setCalendarsCategoryActive(
 
 // Events CRUD
 
+void CalendarsRepository::addEvent(const std::shared_ptr<CalendarEvent>& event)
+{
+    auto calendar = getCalendar(event->getCalendarName())->get();
+    calendar->addEvent(event);
+    reloadEvents();
+}
+
 std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEvents(
-    const std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime,
-    const std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime)
+    const std::chrono::time_point<std::chrono::system_clock> beginDateTime,
+    const std::chrono::time_point<std::chrono::system_clock> endDateTime)
 {
     activeDatesFrame.updateDates(beginDateTime, endDateTime);
     return getEventsBetweenDatesForCalendars(beginDateTime, endDateTime);
@@ -138,8 +150,8 @@ void CalendarsRepository::reloadEvents() const
 // Private methods
 
 std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEventsBetweenDatesForCalendars(
-    const std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime,
-    const std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime) const
+    const std::chrono::time_point<std::chrono::system_clock> beginDateTime,
+    const std::chrono::time_point<std::chrono::system_clock> endDateTime) const
 {
     auto activeCalendars = getCalendars();
 
@@ -160,19 +172,18 @@ std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEventsBetweenDa
 
         auto activeActualEventsFilter = [&activeActualEvents, &beginDateTime, &endDateTime, &activeCategoryNames](
                                             const std::shared_ptr<CalendarEvent>& event) {
-            bool passedBeginTime = true;
-            if (beginDateTime.has_value())
+            bool passedBeginTime = event->getBeginDateTime() >= beginDateTime;
+            bool isPassedSingleDayEvent = false;
+
+            if (!event->getEndDateTime().has_value() &&
+                CommonUtils::Time::isBetweenDates(event->getBeginDateTime(), beginDateTime, endDateTime))
             {
-                passedBeginTime = event->getBeginDateTime() >= beginDateTime.value();
+                isPassedSingleDayEvent = true;
             }
 
-            bool passedEndTime = true;
-            if (endDateTime.has_value())
-            {
-                passedEndTime =
-                    event->getEndDateTime().has_value() && event->getEndDateTime().value() <= endDateTime.value() ||
-                    !event->getEndDateTime().has_value();
-            }
+            bool passedEndTime = !event->getEndDateTime().has_value() && isPassedSingleDayEvent ||
+                event->getEndDateTime().has_value() && event->getEndDateTime().value() <= endDateTime;
+
             return passedBeginTime && passedEndTime && activeCategoryNames.contains(event->getCategory());
         };
 

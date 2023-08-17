@@ -2,7 +2,7 @@
 
 CalendarItem::CalendarItem(
     const std::string& name,
-    const std::set<std::shared_ptr<CalendarCategory>>& categories,
+    const std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator>& categories,
     const std::set<std::shared_ptr<CalendarEvent>>& events)
     : uuid(std::to_string(std::rand()))
     , name(name)
@@ -49,9 +49,14 @@ std::set<std::shared_ptr<CalendarEvent>> CalendarItem::getEvents() const
     return events;
 }
 
-std::set<std::shared_ptr<CalendarCategory>> CalendarItem::getCategories() const
+std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator> CalendarItem::getCategories() const
 {
     return categories;
+}
+
+void CalendarItem::addEvent(const std::shared_ptr<CalendarEvent>& event)
+{
+    events.insert(event);
 }
 
 CalendarItem& CalendarItem::operator=(const CalendarItem& other)

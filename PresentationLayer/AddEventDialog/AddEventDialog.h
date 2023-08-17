@@ -9,10 +9,10 @@
 
 struct AddEventDialogDTO
 {
-    std::optional<std::string> name;
-    std::optional<std::string> calendarName;
-    std::optional<std::string> category;
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime;
+    std::string name;
+    std::string calendarName;
+    std::string category;
+    std::chrono::time_point<std::chrono::system_clock> beginDateTime;
     std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime;
     std::optional<std::string> description;
 };

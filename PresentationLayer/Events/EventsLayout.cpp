@@ -42,23 +42,17 @@ void EventsLayout::didChange(const std::set<std::shared_ptr<CalendarEvent>>& val
 
 void EventsLayout::didChange(const CalendarSelectionDTO& value)
 {
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> beginChronoDate;
-    if (value.beginDate.has_value())
-        beginChronoDate = CommonUtils::Time::stdChronoTimePointFromQDate(value.beginDate.value());
+    std::chrono::time_point<std::chrono::system_clock> beginChronoDate =
+        CommonUtils::Time::stdChronoTimePointFromQDate(value.beginDate);
 
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> endChronoDate;
-    if (value.endDate.has_value())
+    std::chrono::time_point<std::chrono::system_clock> endChronoDate;
+    if (value.beginDate == value.endDate)
     {
-        if (value.beginDate == value.endDate)
-        {
-            if (beginChronoDate.has_value())
-                endChronoDate = CommonUtils::Time::endOfDate(beginChronoDate.value());
-        }
-        else
-        {
-            endChronoDate =
-                CommonUtils::Time::endOfDate(CommonUtils::Time::stdChronoTimePointFromQDate(value.endDate.value()));
-        }
+        endChronoDate = CommonUtils::Time::endOfDate(beginChronoDate);
+    }
+    else
+    {
+        endChronoDate = CommonUtils::Time::endOfDate(CommonUtils::Time::stdChronoTimePointFromQDate(value.endDate));
     }
 
     setCalendarEvents(calendarsRepository->getEvents(beginChronoDate, endChronoDate));
