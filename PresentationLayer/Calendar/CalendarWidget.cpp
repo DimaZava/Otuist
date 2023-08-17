@@ -1,4 +1,5 @@
 #include "CalendarWidget.h"
+#include "../AddEventDialog/AddEventDialog.h"
 
 #include <QApplication>
 #include <QMenu>
@@ -133,19 +134,30 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
     QPoint item = this->mapToGlobal(pos);
     QMenu submenu;
 
-    submenu.addAction("Add");
-    submenu.addAction("Delete");
+    submenu.addAction(tr("Add"));
+    submenu.addAction(tr("Delete"));
     QAction* rightClickItem = submenu.exec(item);
 
-    if (rightClickItem->text() == "Add")
+    if (rightClickItem->text() == tr("Add"))
     {
         auto addDate = dateFromPosition(item);
-        qDebug() << "Add " << addDate.value().toString();
+        qDebug() << tr("Add") << addDate.value().toString();
+
+        if (addDate.has_value())
+        {
+            AddEventDialog dialog(CommonUtils::Time::stdChronoTimePointFromQDate(addDate.value()), std::nullopt, this);
+            if (dialog.exec() == QDialog::Accepted)
+            {
+                auto tmp = dialog.getReturnValue();
+                qDebug() << &tmp;
+                // Use the return value here
+            }
+        }
     }
-    else if (rightClickItem->text() == "Delete")
+    else if (rightClickItem->text() == tr("Delete"))
     {
         auto deleteDate = dateFromPosition(item);
-        qDebug() << "Delete " << deleteDate.value().toString();
+        qDebug() << tr("Delete") << deleteDate.value().toString();
     }
 }
 

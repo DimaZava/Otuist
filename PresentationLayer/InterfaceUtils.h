@@ -6,6 +6,7 @@
 
 namespace InterfaceUtils {
 static const QSize minimumEventsWindowSize = QSize(800, 500);
+static const QSize minimumAddEventDialogSize = QSize(385, 328);
 static const QMargins defaultMargins = QMargins(8, 8, 8, 8);
 static const QMargins zeroMargins = QMargins(0, 0, 0, 0);
 }; // namespace InterfaceUtils

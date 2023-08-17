@@ -23,6 +23,7 @@ std::chrono::time_point<std::chrono::system_clock> endOfDate(
     std::chrono::time_point<std::chrono::system_clock> date = now);
 std::chrono::time_point<std::chrono::system_clock> stdChronoTimePointFromQDateTime(QDateTime date);
 std::chrono::time_point<std::chrono::system_clock> stdChronoTimePointFromQDate(QDate date);
+QDateTime qDateTimeFromStdChrono(std::chrono::time_point<std::chrono::system_clock> timePoint);
 std::string stringFromStdChrono(std::chrono::time_point<std::chrono::system_clock> date);
 } // namespace Time
 }; // namespace CommonUtils
