@@ -59,7 +59,7 @@ public slots:
     const std::string getCategory() const;
     void setCategory(const std::string& category);
 
-    const std::optional<std::string> getUid() const;
+    const std::string getUid() const;
 
     const std::optional<std::string> getHref() const;
     void setHref(const std::optional<std::string>& href);

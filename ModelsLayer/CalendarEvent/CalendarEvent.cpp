@@ -182,7 +182,7 @@ void CalendarEvent::setCategory(const std::string& category)
     this->category = category;
 }
 
-const std::optional<std::string> CalendarEvent::getUid() const
+const std::string CalendarEvent::getUid() const
 {
     return uid;
 }
