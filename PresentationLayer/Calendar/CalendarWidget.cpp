@@ -166,8 +166,6 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
 
     if (rightClickItem->text() == tr("Add"))
     {
-        system("osascript -e 'display notification \"message\" with title\"title\" subtitle \"subtitle\"'");
-
         auto addDate = dateFromPosition(item);
         qDebug() << tr("Add") << addDate.value().toString();
 
