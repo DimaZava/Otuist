@@ -3,14 +3,14 @@
 #include "../InterfaceUtils.h"
 
 EventsLayout::EventsLayout(
-    const std::shared_ptr<CalendarsRepository>& calendarsRepository,
+    const std::shared_ptr<CalendarsManager>& calendarsManager,
     ISubject<CalendarSelectionDTO>& calendarSubject,
     QWidget* parent)
     : QVBoxLayout(parent)
     , eventsList(std::make_unique<QListWidget>())
-    , calendarsRepository(calendarsRepository)
+    , calendarsManager(calendarsManager)
 {
-    calendarsRepository->addObserver(this);
+    calendarsManager->addObserver(this);
     calendarSubject.addObserver(this);
     configureLayout();
 }
@@ -18,7 +18,7 @@ EventsLayout::EventsLayout(
 EventsLayout::~EventsLayout()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    calendarsRepository->removeObserver(this);
+    calendarsManager->removeObserver(this);
     cleanItems();
 }
 
@@ -60,7 +60,7 @@ void EventsLayout::didChange(const CalendarSelectionDTO& value)
         endChronoDate = CommonUtils::Time::endOfDate(CommonUtils::Time::stdChronoTimePointFromQDate(value.endDate));
     }
 
-    setCalendarEvents(calendarsRepository->getEvents(beginChronoDate, endChronoDate));
+    setCalendarEvents(calendarsManager->getEvents(beginChronoDate, endChronoDate));
 }
 
 void EventsLayout::reloadData()
@@ -95,5 +95,5 @@ void EventsLayout::cleanItems()
 
 void EventsLayout::removeEventButtonDidClick(const std::shared_ptr<CalendarEvent>& event)
 {
-    calendarsRepository->removeEvent(event);
+    calendarsManager->removeEvent(event);
 }

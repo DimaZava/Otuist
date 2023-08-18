@@ -7,20 +7,20 @@
 #include <QPalette>
 #include <QTableView>
 
-CalendarWidget::CalendarWidget(const std::shared_ptr<CalendarsRepository>& calendarsRepository)
+CalendarWidget::CalendarWidget(const std::shared_ptr<CalendarsManager>& calendarsManager)
     : QCalendarWidget()
-    , calendarsRepository(calendarsRepository)
+    , calendarsManager(calendarsManager)
     , highlighter(std::make_unique<QTextCharFormat>())
     , currentMonth(QDate::currentDate().month())
 {
-    calendarsRepository->addObserver(this);
+    calendarsManager->addObserver(this);
     performInitialSetup();
 }
 
 CalendarWidget::~CalendarWidget()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    calendarsRepository->removeObserver(this);
+    calendarsManager->removeObserver(this);
 }
 
 void CalendarWidget::didChange(const std::set<std::shared_ptr<CalendarEvent>>& value)
@@ -166,6 +166,8 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
 
     if (rightClickItem->text() == tr("Add"))
     {
+        system("osascript -e 'display notification \"message\" with title\"title\" subtitle \"subtitle\"'");
+
         auto addDate = dateFromPosition(item);
         qDebug() << tr("Add") << addDate.value().toString();
 
@@ -175,7 +177,7 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
             if (dialog.exec() == QDialog::Accepted)
             {
                 auto addEventDTO = dialog.getReturnValue();
-                calendarsRepository->addEvent(std::make_shared<CalendarEvent>(
+                calendarsManager->addEvent(std::make_shared<CalendarEvent>(
                     addEventDTO.name,
                     addEventDTO.calendarName,
                     addEventDTO.category,
@@ -191,7 +193,7 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
         if (!deleteDate.has_value())
             return;
 
-        auto eventsToRemove = calendarsRepository->getEvents(
+        auto eventsToRemove = calendarsManager->getEvents(
             CommonUtils::Time::stdChronoTimePointFromQDate(deleteDate.value()), std::nullopt, false);
 
         const int ret = InterfaceUtils::showConfirmationAlert(
@@ -203,7 +205,7 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
         switch (ret)
         {
             case QMessageBox::Ok:
-                calendarsRepository->removeEvents(eventsToRemove);
+                calendarsManager->removeEvents(eventsToRemove);
                 break;
             case QMessageBox::Cancel:
                 break;
@@ -257,7 +259,7 @@ void CalendarWidget::paintCell(QPainter* painter, const QRect& rect, QDate date)
     QCalendarWidget::paintCell(painter, rect, date);
 
     const auto beginDate = CommonUtils::Time::stdChronoTimePointFromQDate(date);
-    const auto events = calendarsRepository->getEvents(beginDate, std::nullopt, false);
+    const auto events = calendarsManager->getEvents(beginDate, std::nullopt, false);
     const size_t eventsSize = events.size();
 
     const QPen bordersPen = CalendarWidget::bordersPen();

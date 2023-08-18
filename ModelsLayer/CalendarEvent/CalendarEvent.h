@@ -58,7 +58,6 @@ public slots:
     void setCategory(const std::string& category);
 
     const std::optional<std::string> getUid() const;
-    void setUid(const std::optional<std::string>& uid);
 
     const std::optional<std::string> getHref() const;
     void setHref(const std::optional<std::string>& href);
@@ -74,7 +73,7 @@ private:
     std::optional<std::string> rRule;
     std::optional<std::string> exdates;
     std::string category;
-    std::optional<std::string> uid;
+    std::string uid;
     std::optional<std::string> href;
 };
 

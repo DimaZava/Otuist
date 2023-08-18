@@ -1,7 +1,7 @@
 #ifndef CALENDARWIDGET_H
 #define CALENDARWIDGET_H
 
-#include "../../BusinessLogicLayer/CalendarsRepository/CalendarsRepository.h"
+#include "../../BusinessLogicLayer/CalendarsManager/CalendarsManager.h"
 #include "../../BusinessLogicLayer/Observer.h"
 
 #include <QCalendarWidget>
@@ -22,7 +22,7 @@ class CalendarWidget
 {
     Q_OBJECT
 public:
-    explicit CalendarWidget(const std::shared_ptr<CalendarsRepository>& calendarsRepository);
+    explicit CalendarWidget(const std::shared_ptr<CalendarsManager>& calendarsManager);
     ~CalendarWidget() override;
     void didChange(const std::set<std::shared_ptr<CalendarEvent>>& value) override;
 
@@ -34,7 +34,7 @@ private:
     std::optional<QDate> endDate;
     std::unique_ptr<QTextCharFormat> highlighter;
     int currentMonth;
-    const std::shared_ptr<CalendarsRepository>& calendarsRepository;
+    const std::shared_ptr<CalendarsManager>& calendarsManager;
 
     void performInitialSetup();
     void highlightRange(QTextCharFormat format);

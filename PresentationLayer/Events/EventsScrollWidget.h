@@ -14,7 +14,7 @@ class EventsScrollWidget : public QScrollArea
     Q_OBJECT
 public:
     explicit EventsScrollWidget(
-        const std::shared_ptr<CalendarsRepository>& calendarsRepository,
+        const std::shared_ptr<CalendarsManager>& calendarsManager,
         ISubject<CalendarSelectionDTO>& calendarSubject,
         QWidget* parent = nullptr);
     ~EventsScrollWidget() override;

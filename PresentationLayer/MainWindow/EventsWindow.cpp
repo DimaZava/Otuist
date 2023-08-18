@@ -12,18 +12,18 @@
 EventsWindow::EventsWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::EventsWindow)
-    , calendarsRepository(std::make_shared<CalendarsRepository>())
+    , calendarsManager(std::make_shared<CalendarsManager>())
     , mainContentLayout(std::make_unique<QSplitter>(parent))
     , eventsContentLayout(std::make_unique<QSplitter>(mainContentLayout.get()))
-    , calendarsScrollWidget(std::make_unique<CalendarsScrollWidget>(calendarsRepository, mainContentLayout.get()))
-    , calendarWidget(std::make_unique<CalendarWidget>(calendarsRepository))
+    , calendarsScrollWidget(std::make_unique<CalendarsScrollWidget>(calendarsManager, mainContentLayout.get()))
+    , calendarWidget(std::make_unique<CalendarWidget>(calendarsManager))
     , eventsScrollWidget(
-          std::make_unique<EventsScrollWidget>(calendarsRepository, *calendarWidget, eventsContentLayout.get()))
+          std::make_unique<EventsScrollWidget>(calendarsManager, *calendarWidget, eventsContentLayout.get()))
 {
     ui->setupUi(this);
     configureLayout();
     setupInitialState();
-    calendarsRepository->reloadEvents();
+    calendarsManager->reloadEvents();
 }
 
 EventsWindow::~EventsWindow()

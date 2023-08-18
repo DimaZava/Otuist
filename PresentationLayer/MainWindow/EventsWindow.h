@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QSplitter>
 
-#include "../../BusinessLogicLayer/CalendarsRepository/CalendarsRepository.h" // remove if not needed
+#include "../../BusinessLogicLayer/CalendarsManager/CalendarsManager.h" // remove if not needed
 #include "../Calendar/CalendarWidget.h"
 #include "../Calendar/CalendarsScrollWidget.h"
 #include "../Events/EventsScrollWidget.h"
@@ -25,7 +25,7 @@ public:
 
 private:
     Ui::EventsWindow *ui;
-    std::shared_ptr<CalendarsRepository> calendarsRepository;
+    std::shared_ptr<CalendarsManager> calendarsManager;
 
     std::unique_ptr<QSplitter> mainContentLayout;
     std::unique_ptr<QSplitter> eventsContentLayout;

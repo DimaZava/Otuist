@@ -16,9 +16,9 @@ enum class WidgetCategoryColumns
     categoryName
 };
 
-CalendarsLayout::CalendarsLayout(const std::shared_ptr<CalendarsRepository>& calendarsRepository, QWidget* parent)
+CalendarsLayout::CalendarsLayout(const std::shared_ptr<CalendarsManager>& calendarsManager, QWidget* parent)
     : QVBoxLayout(parent)
-    , calendarsRepository(calendarsRepository)
+    , calendarsManager(calendarsManager)
     , categoriesTree(std::make_unique<QTreeWidget>(new QTreeWidget))
     , toolbar(std::make_unique<QToolBar>())
     , addAction(std::make_unique<QAction>("+", this))
@@ -63,7 +63,7 @@ void CalendarsLayout::reloadData()
 {
     categoriesTree->clear();
 
-    for (const auto& calendarItem : calendarsRepository->getCalendars())
+    for (const auto& calendarItem : calendarsManager->getCalendars())
     {
         QTreeWidgetItem* topWidgetItem = new QTreeWidgetItem{categoriesTree.get()};
         topWidgetItem->setText(0, calendarItem.get()->getName().c_str());
@@ -93,7 +93,7 @@ void CalendarsLayout::treeItemDidChange(QTreeWidgetItem* item, int column)
         calendarTreeWidgetItem->text(static_cast<int>(WidgetCalendarColumns::categoryName)).toStdString();
     bool newCheckState = item->checkState(static_cast<int>(WidgetCategoryColumns::checkState));
     std::string categoryName = item->text(static_cast<int>(WidgetCategoryColumns::categoryName)).toStdString();
-    calendarsRepository->setCalendarsCategoryActive(calendarName, categoryName, newCheckState);
+    calendarsManager->setCalendarsCategoryActive(calendarName, categoryName, newCheckState);
 }
 
 void CalendarsLayout::addCalendarActionTriggered()
@@ -113,7 +113,7 @@ void CalendarsLayout::addCalendarActionTriggered()
             return std::make_shared<CalendarCategory>(stringCategory);
             });
 
-        calendarsRepository->addCalendar(std::make_shared<CalendarItem>(addCalendarDTO.name, categories));
+        calendarsManager->addCalendar(std::make_shared<CalendarItem>(addCalendarDTO.name, categories));
         reloadData();
     }
 }
@@ -123,7 +123,7 @@ void CalendarsLayout::removeCalendarActionTriggered()
     std::string calendarName =
         categoriesTree->currentItem()->text(static_cast<int>(WidgetCalendarColumns::categoryName)).toStdString();
 
-    auto calendar = calendarsRepository->getCalendar(calendarName);
+    auto calendar = calendarsManager->getCalendar(calendarName);
     if (!calendar.has_value())
         return;
 
@@ -137,7 +137,7 @@ void CalendarsLayout::removeCalendarActionTriggered()
     switch (ret)
     {
         case QMessageBox::Ok:
-            calendarsRepository->deleteCalendar(calendarName);
+            calendarsManager->deleteCalendar(calendarName);
             reloadData();
             break;
         case QMessageBox::Cancel:

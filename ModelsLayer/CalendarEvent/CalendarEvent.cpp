@@ -1,4 +1,5 @@
 #include "CalendarEvent.h"
+#include <QUuid>
 
 CalendarEvent::CalendarEvent(
     const std::string& name,
@@ -13,6 +14,7 @@ CalendarEvent::CalendarEvent(
     , beginDateTime(beginDateTime)
     , endDateTime(endDateTime)
     , description(description)
+    , uid(QUuid::createUuid().toString().toStdString())
 {}
 
 CalendarEvent::CalendarEvent(const CalendarEvent& event)
@@ -183,11 +185,6 @@ void CalendarEvent::setCategory(const std::string& category)
 const std::optional<std::string> CalendarEvent::getUid() const
 {
     return uid;
-}
-
-void CalendarEvent::setUid(const std::optional<std::string>& uid)
-{
-    this->uid = uid;
 }
 
 const std::optional<std::string> CalendarEvent::getHref() const

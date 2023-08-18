@@ -1,5 +1,5 @@
-#ifndef CALENDARSREPOSITORY_H
-#define CALENDARSREPOSITORY_H
+#ifndef CALENDARSMANAGER_H
+#define CALENDARSMANAGER_H
 
 #include "../../BusinessLogicLayer/CommonUtils/CommonUtils.h"
 #include "../../BusinessLogicLayer/ObjectsRepository.h"
@@ -27,15 +27,15 @@ struct ActiveDatesFrame
     }
 };
 
-class CalendarsRepository
+class CalendarsManager
     : protected ObjectsRepository<std::shared_ptr<CalendarItem>>
     , public ISubject<std::set<std::shared_ptr<CalendarEvent>>>
 {
 public:
-    CalendarsRepository();
-    CalendarsRepository(const CalendarsRepository& repository) = delete;
-    CalendarsRepository(CalendarsRepository&& repository) = delete;
-    ~CalendarsRepository() override;
+    CalendarsManager();
+    CalendarsManager(const CalendarsManager& repository) = delete;
+    CalendarsManager(CalendarsManager&& repository) = delete;
+    ~CalendarsManager() override;
 
     void addCalendar(const std::shared_ptr<CalendarItem>& calendar);
     std::set<std::shared_ptr<CalendarItem>> getCalendars() const;
@@ -53,9 +53,9 @@ public:
         const std::optional<std::chrono::time_point<std::chrono::system_clock>>& endDateTime,
         bool shouldUpdateActiveDatesFrame = true);
     void reloadEvents() const;
-
-    CalendarsRepository& operator=(const CalendarsRepository& other) = delete;
-    CalendarsRepository& operator=(CalendarsRepository&& other) = delete;
+    
+    CalendarsManager& operator=(const CalendarsManager& other) = delete;
+    CalendarsManager& operator=(CalendarsManager&& other) = delete;
 
 private:
     std::set<std::shared_ptr<CalendarEvent>> getEventsBetweenDatesForCalendars(
@@ -65,4 +65,4 @@ private:
     ActiveDatesFrame activeDatesFrame{CommonUtils::Time::beginOfDate(), CommonUtils::Time::endOfDate()};
 };
 
-#endif // CALENDARSREPOSITORY_H
+#endif // CALENDARSMANAGER_H

@@ -1,10 +1,11 @@
-#include "CalendarsRepository.h"
 #include "../../BusinessLogicLayer/CommonUtils/CommonUtils.h"
+#include "CalendarsManager.h"
 
 #include <algorithm>
 #include <ranges>
 
-CalendarsRepository::CalendarsRepository(){
+CalendarsManager::CalendarsManager()
+{
     const auto now = std::chrono::system_clock::now();
 
     std::set<std::shared_ptr<CalendarEvent>> events;
@@ -61,42 +62,42 @@ CalendarsRepository::CalendarsRepository(){
     addObject(std::make_shared<CalendarItem>("Default", categories, events));
 }
 
-CalendarsRepository::~CalendarsRepository()
+CalendarsManager::~CalendarsManager()
 {
     qDebug() << __PRETTY_FUNCTION__;
 }
 
 // Calendars CRUD
 
-void CalendarsRepository::addCalendar(const std::shared_ptr<CalendarItem>& calendar)
+void CalendarsManager::addCalendar(const std::shared_ptr<CalendarItem>& calendar)
 {
     addObject(calendar);
     reloadEvents();
 }
 
-std::set<std::shared_ptr<CalendarItem>> CalendarsRepository::getCalendars() const
+std::set<std::shared_ptr<CalendarItem>> CalendarsManager::getCalendars() const
 {
     return readObjects();
 }
 
-std::optional<std::shared_ptr<CalendarItem>> CalendarsRepository::getCalendar(const std::string& name) const
+std::optional<std::shared_ptr<CalendarItem>> CalendarsManager::getCalendar(const std::string& name) const
 {
     return readObject(name);
 }
 
-void CalendarsRepository::updateCalendar(const std::string& name, const std::shared_ptr<CalendarItem>& calendar)
+void CalendarsManager::updateCalendar(const std::string& name, const std::shared_ptr<CalendarItem>& calendar)
 {
     // updateObject(name, calendar);
     // notify();
 }
 
-void CalendarsRepository::deleteCalendar(const std::string& name)
+void CalendarsManager::deleteCalendar(const std::string& name)
 {
     deleteObject(name);
     reloadEvents();
 }
 
-void CalendarsRepository::setCalendarsCategoryActive(
+void CalendarsManager::setCalendarsCategoryActive(
     const std::string& calendarName,
     const std::string& categoryName,
     bool isActive) const
@@ -120,20 +121,20 @@ void CalendarsRepository::setCalendarsCategoryActive(
 
 // Events CRUD
 
-void CalendarsRepository::addEvent(const std::shared_ptr<CalendarEvent>& event) const
+void CalendarsManager::addEvent(const std::shared_ptr<CalendarEvent>& event) const
 {
     auto calendar = getCalendar(event->getCalendarName())->get();
     calendar->addEvent(event);
     reloadEvents();
 }
-void CalendarsRepository::removeEvent(const std::shared_ptr<CalendarEvent>& event) const
+void CalendarsManager::removeEvent(const std::shared_ptr<CalendarEvent>& event) const
 {
     auto calendar = getCalendar(event->getCalendarName())->get();
     calendar->removeEvent(event);
     reloadEvents();
 }
 
-void CalendarsRepository::removeEvents(const std::set<std::shared_ptr<CalendarEvent>>& events) const
+void CalendarsManager::removeEvents(const std::set<std::shared_ptr<CalendarEvent>>& events) const
 {
     for (const auto& event : events)
     {
@@ -143,7 +144,7 @@ void CalendarsRepository::removeEvents(const std::set<std::shared_ptr<CalendarEv
     reloadEvents();
 }
 
-std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEvents(
+std::set<std::shared_ptr<CalendarEvent>> CalendarsManager::getEvents(
     const std::chrono::time_point<std::chrono::system_clock>& beginDateTime,
     const std::optional<std::chrono::time_point<std::chrono::system_clock>>& endDateTime,
     bool shouldUpdateActiveDatesFrame)
@@ -156,14 +157,14 @@ std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEvents(
     return getEventsBetweenDatesForCalendars(beginDateTime, adjustedEndTime);
 }
 
-void CalendarsRepository::reloadEvents() const
+void CalendarsManager::reloadEvents() const
 {
     notify(getEventsBetweenDatesForCalendars(activeDatesFrame.beginDateTime, activeDatesFrame.endDateTime));
 }
 
 // Private methods
 
-std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEventsBetweenDatesForCalendars(
+std::set<std::shared_ptr<CalendarEvent>> CalendarsManager::getEventsBetweenDatesForCalendars(
     const std::chrono::time_point<std::chrono::system_clock> beginDateTime,
     const std::chrono::time_point<std::chrono::system_clock> endDateTime) const
 {

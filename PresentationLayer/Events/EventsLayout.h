@@ -1,7 +1,7 @@
 #ifndef EVENTSLAYOUT_H
 #define EVENTSLAYOUT_H
 
-#include "../../BusinessLogicLayer/CalendarsRepository/CalendarsRepository.h"
+#include "../../BusinessLogicLayer/CalendarsManager/CalendarsManager.h"
 #include "../../BusinessLogicLayer/Observer.h"
 #include "../../ModelsLayer/CalendarEvent/CalendarEvent.h"
 #include "../../PresentationLayer/Calendar/CalendarWidget.h"
@@ -20,7 +20,7 @@ class EventsLayout
     Q_OBJECT
 public:
     explicit EventsLayout(
-        const std::shared_ptr<CalendarsRepository>& calendarsRepository,
+        const std::shared_ptr<CalendarsManager>& calendarsManager,
         ISubject<CalendarSelectionDTO>& calendarSubject,
         QWidget* parent = nullptr);
     ~EventsLayout() override;
@@ -34,7 +34,7 @@ public:
 
 private:
     const std::unique_ptr<QListWidget> eventsList;
-    const std::shared_ptr<CalendarsRepository> calendarsRepository;
+    const std::shared_ptr<CalendarsManager> calendarsManager;
     std::set<std::shared_ptr<CalendarEvent>, CalendarEventComparator> calendarEvents;
 
     void configureLayout();

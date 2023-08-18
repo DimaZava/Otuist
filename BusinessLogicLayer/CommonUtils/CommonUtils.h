@@ -5,6 +5,8 @@
 #include <QSettings>
 #include <chrono>
 
+typedef std::chrono::time_point<std::chrono::system_clock> Time;
+
 namespace CommonUtils {
 QSettings getAppSettings();
 void performSetup();

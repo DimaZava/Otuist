@@ -1,7 +1,7 @@
 #ifndef CALENDARSLAYOUT_H
 #define CALENDARSLAYOUT_H
 
-#include "../../BusinessLogicLayer/CalendarsRepository/CalendarsRepository.h"
+#include "../../BusinessLogicLayer/CalendarsManager/CalendarsManager.h"
 
 #include <QLabel>
 #include <QToolBar>
@@ -13,12 +13,12 @@ class CalendarsLayout : public QVBoxLayout
     Q_OBJECT
 public:
     explicit CalendarsLayout(
-        const std::shared_ptr<CalendarsRepository>& calendarsRepository,
+        const std::shared_ptr<CalendarsManager>& calendarsManager,
         QWidget* parent = nullptr);
     ~CalendarsLayout() override;
 
 private:
-    const std::shared_ptr<CalendarsRepository>& calendarsRepository;
+    const std::shared_ptr<CalendarsManager>& calendarsManager;
     std::unique_ptr<QTreeWidget> categoriesTree;
     std::unique_ptr<QToolBar> toolbar;
     std::unique_ptr<QAction> addAction;

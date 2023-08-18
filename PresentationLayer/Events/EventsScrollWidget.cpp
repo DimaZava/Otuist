@@ -3,12 +3,12 @@
 #include "../InterfaceUtils.h"
 
 EventsScrollWidget::EventsScrollWidget(
-    const std::shared_ptr<CalendarsRepository>& calendarsRepository,
+    const std::shared_ptr<CalendarsManager>& calendarsManager,
     ISubject<CalendarSelectionDTO>& calendarSubject,
     QWidget* parent)
     : QScrollArea(parent)
     , eventsLayoutContainer(std::make_unique<QWidget>(this))
-    , eventsLayout(std::make_unique<EventsLayout>(calendarsRepository, calendarSubject, eventsLayoutContainer.get()))
+    , eventsLayout(std::make_unique<EventsLayout>(calendarsManager, calendarSubject, eventsLayoutContainer.get()))
 {
     configureLayout();
 }
