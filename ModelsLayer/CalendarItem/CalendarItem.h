@@ -58,8 +58,6 @@ public:
     void removeEvent(const std::shared_ptr<CalendarEvent>& event);
     std::set<std::shared_ptr<CalendarEvent>> getEvents() const;
 
-    std::string getUuid() const;
-
     CalendarItem& operator=(const CalendarItem& other);
     CalendarItem& operator=(CalendarItem&& other) noexcept;
 
@@ -68,7 +66,6 @@ public:
     bool operator!=(const CalendarItem& other) const;
 
 private:
-    std::string uuid;
     std::string name;
     std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator> categories;
     std::set<std::shared_ptr<CalendarEvent>> events;

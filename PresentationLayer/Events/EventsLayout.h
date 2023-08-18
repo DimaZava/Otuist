@@ -35,7 +35,7 @@ public:
 private:
     const std::unique_ptr<QListWidget> eventsList;
     const std::shared_ptr<CalendarsRepository> calendarsRepository;
-    std::set<std::shared_ptr<CalendarEvent>> calendarEvents;
+    std::set<std::shared_ptr<CalendarEvent>, CalendarEventComparator> calendarEvents;
 
     void configureLayout();
     void reloadData();

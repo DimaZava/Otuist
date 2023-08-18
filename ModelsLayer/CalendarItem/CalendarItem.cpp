@@ -4,24 +4,21 @@ CalendarItem::CalendarItem(
     const std::string& name,
     const std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator>& categories,
     const std::set<std::shared_ptr<CalendarEvent>>& events)
-    : uuid(std::to_string(std::rand()))
-    , name(name)
+    : name(name)
     , categories(categories)
     , events(events)
 {
 }
 
 CalendarItem::CalendarItem(const CalendarItem& calendar)
-    : uuid(calendar.uuid)
-    , name(calendar.name)
+    : name(calendar.name)
     , categories(calendar.categories)
     , events(calendar.events)
 {
 }
 
 CalendarItem::CalendarItem(CalendarItem&& calendar) noexcept
-    : uuid(std::exchange(calendar.uuid, nullptr))
-    , name(std::exchange(calendar.name, nullptr))
+    : name(std::exchange(calendar.name, nullptr))
 {
     categories = std::move(calendar.categories);
     calendar.categories.clear();
@@ -32,11 +29,6 @@ CalendarItem::CalendarItem(CalendarItem&& calendar) noexcept
 CalendarItem::~CalendarItem()
 {
     qDebug() << __PRETTY_FUNCTION__;
-}
-
-std::string CalendarItem::getUuid() const
-{
-    return uuid;
 }
 
 std::string CalendarItem::getName() const
@@ -70,7 +62,6 @@ void CalendarItem::removeEvent(const std::shared_ptr<CalendarEvent>& event)
 
 CalendarItem& CalendarItem::operator=(const CalendarItem& other)
 {
-    uuid = other.uuid;
     name = other.name;
     categories = other.categories;
     events = other.events;
@@ -85,7 +76,6 @@ CalendarItem& CalendarItem::operator=(CalendarItem&& other) noexcept
         return *this;
     }
 
-    uuid = std::exchange(other.uuid, nullptr);
     name = std::exchange(other.name, nullptr);
 
     categories = std::move(other.categories);

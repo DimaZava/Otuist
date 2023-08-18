@@ -1,5 +1,6 @@
 #include "CalendarsLayout.h"
 #include "../../PresentationLayer/InterfaceUtils.h"
+#include "../AddCalendarDialog/AddCalendarDialog.h"
 
 #include <QHeaderView>
 #include <set>
@@ -56,7 +57,6 @@ void CalendarsLayout::configureLayout()
     addWidget(toolbar.get());
 
     reloadData();
-    categoriesTree->expandAll();
 }
 
 void CalendarsLayout::reloadData()
@@ -79,6 +79,8 @@ void CalendarsLayout::reloadData()
 
     if (categoriesTree->topLevelItem(0) != nullptr)
         categoriesTree->setCurrentItem(categoriesTree->topLevelItem(0));
+
+    categoriesTree->expandAll();
 }
 
 void CalendarsLayout::treeItemDidChange(QTreeWidgetItem* item, int column)
@@ -94,7 +96,27 @@ void CalendarsLayout::treeItemDidChange(QTreeWidgetItem* item, int column)
     calendarsRepository->setCalendarsCategoryActive(calendarName, categoryName, newCheckState);
 }
 
-void CalendarsLayout::addCalendarActionTriggered() {}
+void CalendarsLayout::addCalendarActionTriggered()
+{
+    AddCalendarDialog dialog;
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        auto addCalendarDTO = dialog.getReturnValue();
+        auto dtoCategories = addCalendarDTO.categories;
+        std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator> categories;
+
+        std::transform(
+            addCalendarDTO.categories.begin(),
+            addCalendarDTO.categories.end(),
+            std::inserter(categories, categories.end()),
+            [&dtoCategories](const std::string stringCategory) {
+            return std::make_shared<CalendarCategory>(stringCategory);
+            });
+
+        calendarsRepository->addCalendar(std::make_shared<CalendarItem>(addCalendarDTO.name, categories));
+        reloadData();
+    }
+}
 
 void CalendarsLayout::removeCalendarActionTriggered()
 {

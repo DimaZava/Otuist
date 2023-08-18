@@ -67,7 +67,7 @@ CalendarEvent& CalendarEvent::operator=(CalendarEvent&& other) noexcept
 
 bool CalendarEvent::operator<(const CalendarEvent& other) const
 {
-    return this->name < other.name;
+    return this->beginDateTime < other.beginDateTime;
 }
 
 bool CalendarEvent::operator==(const CalendarEvent& other) const

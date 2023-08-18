@@ -31,7 +31,16 @@ void EventsLayout::configureLayout()
 
 void EventsLayout::setCalendarEvents(const std::set<std::shared_ptr<CalendarEvent>>& calendarEvents)
 {
-    this->calendarEvents = calendarEvents;
+    // Have to transform since this instance operates with custom sorted events
+    // TODO: Maybe sort it everywhere?
+    this->calendarEvents.clear();
+    std::transform(
+        calendarEvents.begin(),
+        calendarEvents.end(),
+        std::inserter(this->calendarEvents, this->calendarEvents.end()),
+        [](const std::shared_ptr<CalendarEvent>& event) {
+        return event;
+        });
     reloadData();
 }
 

@@ -21,7 +21,7 @@ class AddEventDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit AddEventDialog(
+    AddEventDialog(
         std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime,
         std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime,
         QWidget* parent = nullptr);

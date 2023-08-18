@@ -78,4 +78,12 @@ private:
     std::optional<std::string> href;
 };
 
+struct CalendarEventComparator
+{
+    bool operator()(const std::shared_ptr<CalendarEvent>& left, const std::shared_ptr<CalendarEvent>& right) const
+    {
+        return *left < *right;
+    }
+};
+
 #endif // CALENDAREVENT_H
