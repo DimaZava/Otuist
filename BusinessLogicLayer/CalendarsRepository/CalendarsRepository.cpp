@@ -133,6 +133,16 @@ void CalendarsRepository::removeEvent(const std::shared_ptr<CalendarEvent>& even
     reloadEvents();
 }
 
+void CalendarsRepository::removeEvents(const std::set<std::shared_ptr<CalendarEvent>>& events) const
+{
+    for (const auto& event : events)
+    {
+        auto calendar = getCalendar(event->getCalendarName())->get();
+        calendar->removeEvent(event);
+    }
+    reloadEvents();
+}
+
 std::set<std::shared_ptr<CalendarEvent>> CalendarsRepository::getEvents(
     const std::chrono::time_point<std::chrono::system_clock>& beginDateTime,
     const std::optional<std::chrono::time_point<std::chrono::system_clock>>& endDateTime,

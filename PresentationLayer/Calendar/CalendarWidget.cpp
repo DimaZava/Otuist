@@ -158,7 +158,7 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
     QMenu submenu;
 
     submenu.addAction(tr("Add"));
-    submenu.addAction(tr("Delete"));
+    submenu.addAction(tr("Delete All"));
     QAction* rightClickItem = submenu.exec(item);
 
     if (rightClickItem == nullptr)
@@ -188,18 +188,22 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
     else if (rightClickItem->text() == tr("Delete All"))
     {
         auto deleteDate = dateFromPosition(item);
-        // calendarsRepository->getEvents(deleteDate, CommonUtils::Time::);
+        if (!deleteDate.has_value())
+            return;
+
+        auto eventsToRemove = calendarsRepository->getEvents(
+            CommonUtils::Time::stdChronoTimePointFromQDate(deleteDate.value()), std::nullopt, false);
 
         const int ret = InterfaceUtils::showConfirmationAlert(
             tr("Delete Events"),
-            tr("You really want to delete all %1 event").arg(1),
+            tr("Do you really want to delete all %1 event").arg(eventsToRemove.size()),
             QMessageBox::Ok | QMessageBox::Cancel,
             QMessageBox::Ok);
 
         switch (ret)
         {
             case QMessageBox::Ok:
-                qDebug() << "Ok";
+                calendarsRepository->removeEvents(eventsToRemove);
                 break;
             case QMessageBox::Cancel:
                 break;
