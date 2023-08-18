@@ -23,7 +23,7 @@ CalendarWidget::~CalendarWidget()
     calendarsManager->removeObserver(this);
 }
 
-void CalendarWidget::didChange(const std::set<std::shared_ptr<CalendarEvent>>& value)
+void CalendarWidget::didChange(const std::set<SharedCalendarEvent>& value)
 {
     updateCells();
 }

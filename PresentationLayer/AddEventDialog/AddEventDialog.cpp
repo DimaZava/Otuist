@@ -3,8 +3,8 @@
 #include "../InterfaceUtils.h"
 
 AddEventDialog::AddEventDialog(
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime,
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime,
+    std::optional<DateTime> beginDateTime,
+    std::optional<DateTime> endDateTime,
     QWidget* parent)
     : QDialog(parent)
     , formLayout(std::make_unique<QFormLayout>(this))
@@ -42,9 +42,7 @@ AddEventDialogDTO AddEventDialog::getReturnValue()
         descriptionTextEdit->toPlainText().toStdString()};
 }
 
-void AddEventDialog::setupInitialState(
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime,
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime)
+void AddEventDialog::setupInitialState(std::optional<DateTime> beginDateTime, std::optional<DateTime> endDateTime)
 {
     setMinimumSize(InterfaceUtils::minimumAddEventDialogSize);
     resize(InterfaceUtils::minimumAddEventDialogSize);

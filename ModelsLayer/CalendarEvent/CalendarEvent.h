@@ -1,6 +1,8 @@
 #ifndef CALENDAREVENT_H
 #define CALENDAREVENT_H
 
+#include "../../BusinessLogicLayer/CommonUtils/CommonUtils.h"
+
 #include <QDate>
 #include <optional>
 #include <string>
@@ -12,8 +14,8 @@ public:
         const std::string& name,
         const std::string& calendarName,
         const std::string& category,
-        const std::chrono::time_point<std::chrono::system_clock>& beginDateTime,
-        const std::optional<std::chrono::time_point<std::chrono::system_clock>>& endDateTime,
+        const DateTime& beginDateTime,
+        const std::optional<DateTime>& endDateTime,
         const std::optional<std::string>& description);
     CalendarEvent(const CalendarEvent& event);
     CalendarEvent(CalendarEvent&& event) noexcept;
@@ -27,11 +29,11 @@ public:
     bool operator!=(const CalendarEvent& other) const;
 
 public slots:
-    const std::chrono::time_point<std::chrono::system_clock> getBeginDateTime() const;
-    void setBeginDateTime(const std::chrono::time_point<std::chrono::system_clock>& dateTime);
+    const DateTime getBeginDateTime() const;
+    void setBeginDateTime(const DateTime& dateTime);
 
-    const std::optional<std::chrono::time_point<std::chrono::system_clock>> getEndDateTime() const;
-    void endEndDateTime(const std::optional<std::chrono::time_point<std::chrono::system_clock>>& dateTime);
+    const std::optional<DateTime> getEndDateTime() const;
+    void endEndDateTime(const std::optional<DateTime>& dateTime);
 
     const std::string getName() const;
     void setName(const std::string& name);
@@ -63,8 +65,8 @@ public slots:
     void setHref(const std::optional<std::string>& href);
 
 private:
-    std::chrono::time_point<std::chrono::system_clock> beginDateTime;
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime;
+    DateTime beginDateTime;
+    std::optional<DateTime> endDateTime;
     std::string name;
     std::optional<std::string> description;
     std::optional<std::string> color;
@@ -77,9 +79,11 @@ private:
     std::optional<std::string> href;
 };
 
+typedef std::shared_ptr<CalendarEvent> SharedCalendarEvent;
+
 struct CalendarEventComparator
 {
-    bool operator()(const std::shared_ptr<CalendarEvent>& left, const std::shared_ptr<CalendarEvent>& right) const
+    bool operator()(const SharedCalendarEvent& left, const SharedCalendarEvent& right) const
     {
         return *left < *right;
     }

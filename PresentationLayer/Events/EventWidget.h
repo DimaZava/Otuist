@@ -10,19 +10,19 @@
 class EventWidgetDelegate
 {
 public:
-    virtual void removeEventButtonDidClick(const std::shared_ptr<CalendarEvent>& event) = 0;
+    virtual void removeEventButtonDidClick(const SharedCalendarEvent& event) = 0;
 };
 
 class EventWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EventWidget(const std::shared_ptr<CalendarEvent>& event, QWidget* parent = nullptr);
+    explicit EventWidget(const SharedCalendarEvent& event, QWidget* parent = nullptr);
     ~EventWidget() override;
     EventWidgetDelegate* delegate; // take care of this raw point
 
 private:
-    std::shared_ptr<CalendarEvent> event;
+    SharedCalendarEvent event;
     std::unique_ptr<QHBoxLayout> mainLayout;
     void setupInitialState();
 

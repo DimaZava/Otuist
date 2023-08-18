@@ -5,7 +5,7 @@
 #include <QLabel>
 #include <QPushButton>
 
-EventWidget::EventWidget(const std::shared_ptr<CalendarEvent>& event, QWidget* parent)
+EventWidget::EventWidget(const SharedCalendarEvent& event, QWidget* parent)
     : QWidget{parent}
     , event(event)
     , mainLayout(std::make_unique<QHBoxLayout>(this))

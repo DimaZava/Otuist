@@ -14,7 +14,7 @@
 class EventsLayout
     : public QVBoxLayout
     , public EventWidgetDelegate
-    , public IObserver<std::set<std::shared_ptr<CalendarEvent>>>
+    , public IObserver<std::set<SharedCalendarEvent>>
     , public IObserver<CalendarSelectionDTO>
 {
     Q_OBJECT
@@ -25,17 +25,17 @@ public:
         QWidget* parent = nullptr);
     ~EventsLayout() override;
 
-    void setCalendarEvents(const std::set<std::shared_ptr<CalendarEvent>>& calendarEvents);
-    void didChange(const std::set<std::shared_ptr<CalendarEvent>>& value) override;
+    void setCalendarEvents(const std::set<SharedCalendarEvent>& calendarEvents);
+    void didChange(const std::set<SharedCalendarEvent>& value) override;
     void didChange(const CalendarSelectionDTO& value) override;
 
     // EventWidgetDelegate
-    void removeEventButtonDidClick(const std::shared_ptr<CalendarEvent>& event) override;
+    void removeEventButtonDidClick(const SharedCalendarEvent& event) override;
 
 private:
     const std::unique_ptr<QListWidget> eventsList;
     const std::shared_ptr<CalendarsManager> calendarsManager;
-    std::set<std::shared_ptr<CalendarEvent>, CalendarEventComparator> calendarEvents;
+    std::set<SharedCalendarEvent, CalendarEventComparator> calendarEvents;
 
     void configureLayout();
     void reloadData();

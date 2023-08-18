@@ -3,7 +3,7 @@
 CalendarItem::CalendarItem(
     const std::string& name,
     const std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator>& categories,
-    const std::set<std::shared_ptr<CalendarEvent>>& events)
+    const std::set<SharedCalendarEvent>& events)
     : name(name)
     , categories(categories)
     , events(events)
@@ -36,7 +36,7 @@ std::string CalendarItem::getName() const
     return name;
 }
 
-std::set<std::shared_ptr<CalendarEvent>> CalendarItem::getEvents() const
+std::set<SharedCalendarEvent> CalendarItem::getEvents() const
 {
     return events;
 }
@@ -46,12 +46,12 @@ std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator> Calendar
     return categories;
 }
 
-void CalendarItem::addEvent(const std::shared_ptr<CalendarEvent>& event)
+void CalendarItem::addEvent(const SharedCalendarEvent& event)
 {
     events.insert(event);
 }
 
-void CalendarItem::removeEvent(const std::shared_ptr<CalendarEvent>& event)
+void CalendarItem::removeEvent(const SharedCalendarEvent& event)
 {
     auto it = events.find(event);
     if (it != events.end())

@@ -1,6 +1,8 @@
 #ifndef ADDEVENTDIALOG_H
 #define ADDEVENTDIALOG_H
 
+#include "../../BusinessLogicLayer/CommonUtils/CommonUtils.h"
+
 #include <QDateTimeEdit>
 #include <QDialog>
 #include <QFormLayout>
@@ -12,8 +14,8 @@ struct AddEventDialogDTO
     std::string name;
     std::string calendarName;
     std::string category;
-    std::chrono::time_point<std::chrono::system_clock> beginDateTime;
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime;
+    DateTime beginDateTime;
+    std::optional<DateTime> endDateTime;
     std::optional<std::string> description;
 };
 
@@ -22,8 +24,8 @@ class AddEventDialog : public QDialog
     Q_OBJECT
 public:
     AddEventDialog(
-        std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime,
-        std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime,
+        std::optional<DateTime> beginDateTime,
+        std::optional<DateTime> endDateTime,
         QWidget* parent = nullptr);
 
     AddEventDialog(const AddEventDialog& dialog) = delete;
@@ -37,9 +39,7 @@ public:
     AddEventDialogDTO getReturnValue();
 
 private:
-    void setupInitialState(
-        std::optional<std::chrono::time_point<std::chrono::system_clock>> beginDateTime,
-        std::optional<std::chrono::time_point<std::chrono::system_clock>> endDateTime);
+    void setupInitialState(std::optional<DateTime> beginDateTime, std::optional<DateTime> endDateTime);
 
     std::unique_ptr<QFormLayout> formLayout;
     std::unique_ptr<QTextEdit> nameTextEdit;

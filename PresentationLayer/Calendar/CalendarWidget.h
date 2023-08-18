@@ -18,13 +18,13 @@ struct CalendarSelectionDTO
 class CalendarWidget
     : public QCalendarWidget
     , public ISubject<CalendarSelectionDTO>
-    , public IObserver<std::set<std::shared_ptr<CalendarEvent>>>
+    , public IObserver<std::set<SharedCalendarEvent>>
 {
     Q_OBJECT
 public:
     explicit CalendarWidget(const std::shared_ptr<CalendarsManager>& calendarsManager);
     ~CalendarWidget() override;
-    void didChange(const std::set<std::shared_ptr<CalendarEvent>>& value) override;
+    void didChange(const std::set<SharedCalendarEvent>& value) override;
 
 protected:
     void paintCell(QPainter* painter, const QRect& rect, QDate date) const override;

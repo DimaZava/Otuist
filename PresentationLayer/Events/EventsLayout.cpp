@@ -29,7 +29,7 @@ void EventsLayout::configureLayout()
     addWidget(eventsList.get());
 }
 
-void EventsLayout::setCalendarEvents(const std::set<std::shared_ptr<CalendarEvent>>& calendarEvents)
+void EventsLayout::setCalendarEvents(const std::set<SharedCalendarEvent>& calendarEvents)
 {
     // Have to transform since this instance operates with custom sorted events
     // TODO: Maybe sort it everywhere?
@@ -38,23 +38,23 @@ void EventsLayout::setCalendarEvents(const std::set<std::shared_ptr<CalendarEven
         calendarEvents.begin(),
         calendarEvents.end(),
         std::inserter(this->calendarEvents, this->calendarEvents.end()),
-        [](const std::shared_ptr<CalendarEvent>& event) {
+        [](const SharedCalendarEvent& event) {
         return event;
         });
     reloadData();
 }
 
-void EventsLayout::didChange(const std::set<std::shared_ptr<CalendarEvent>>& value)
+void EventsLayout::didChange(const std::set<SharedCalendarEvent>& value)
 {
     setCalendarEvents(value);
 }
 
 void EventsLayout::didChange(const CalendarSelectionDTO& value)
 {
-    std::chrono::time_point<std::chrono::system_clock> beginChronoDate =
+    DateTime beginChronoDate =
         CommonUtils::Time::stdChronoTimePointFromQDate(value.beginDate);
 
-    std::optional<std::chrono::time_point<std::chrono::system_clock>> endChronoDate;
+    std::optional<DateTime> endChronoDate;
     if (value.beginDate != value.endDate)
     {
         endChronoDate = CommonUtils::Time::endOfDate(CommonUtils::Time::stdChronoTimePointFromQDate(value.endDate));
@@ -93,7 +93,7 @@ void EventsLayout::cleanItems()
 
 // EventsWidgetDelegate
 
-void EventsLayout::removeEventButtonDidClick(const std::shared_ptr<CalendarEvent>& event)
+void EventsLayout::removeEventButtonDidClick(const SharedCalendarEvent& event)
 {
     calendarsManager->removeEvent(event);
 }

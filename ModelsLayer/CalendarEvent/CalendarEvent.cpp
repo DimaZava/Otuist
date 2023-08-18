@@ -5,8 +5,8 @@ CalendarEvent::CalendarEvent(
     const std::string& name,
     const std::string& calendarName,
     const std::string& category,
-    const std::chrono::time_point<std::chrono::system_clock>& beginDateTime,
-    const std::optional<std::chrono::time_point<std::chrono::system_clock>>& endDateTime,
+    const DateTime& beginDateTime,
+    const std::optional<DateTime>& endDateTime,
     const std::optional<std::string>& description)
     : name(name)
     , calendarName(calendarName)
@@ -82,22 +82,22 @@ bool CalendarEvent::operator!=(const CalendarEvent& other) const
     return *this < other || other < *this;
 }
 
-const std::chrono::time_point<std::chrono::system_clock> CalendarEvent::getBeginDateTime() const
+const DateTime CalendarEvent::getBeginDateTime() const
 {
     return beginDateTime;
 }
 
-void CalendarEvent::setBeginDateTime(const std::chrono::time_point<std::chrono::system_clock>& dateTime)
+void CalendarEvent::setBeginDateTime(const DateTime& dateTime)
 {
     this->beginDateTime = dateTime;
 }
 
-const std::optional<std::chrono::time_point<std::chrono::system_clock>> CalendarEvent::getEndDateTime() const
+const std::optional<DateTime> CalendarEvent::getEndDateTime() const
 {
     return endDateTime;
 }
 
-void CalendarEvent::endEndDateTime(const std::optional<std::chrono::time_point<std::chrono::system_clock>>& dateTime)
+void CalendarEvent::endEndDateTime(const std::optional<DateTime>& dateTime)
 {
     this->endDateTime = dateTime;
 }

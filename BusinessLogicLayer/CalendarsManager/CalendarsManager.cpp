@@ -8,7 +8,7 @@ CalendarsManager::CalendarsManager()
 {
     const auto now = std::chrono::system_clock::now();
 
-    std::set<std::shared_ptr<CalendarEvent>> events;
+    std::set<SharedCalendarEvent> events;
     events.insert(std::make_shared<CalendarEvent>(
         "Event Work 1",
         "Default",
@@ -69,23 +69,23 @@ CalendarsManager::~CalendarsManager()
 
 // Calendars CRUD
 
-void CalendarsManager::addCalendar(const std::shared_ptr<CalendarItem>& calendar)
+void CalendarsManager::addCalendar(const SharedCalendarItem& calendar)
 {
     addObject(calendar);
     reloadEvents();
 }
 
-std::set<std::shared_ptr<CalendarItem>> CalendarsManager::getCalendars() const
+std::set<SharedCalendarItem> CalendarsManager::getCalendars() const
 {
     return readObjects();
 }
 
-std::optional<std::shared_ptr<CalendarItem>> CalendarsManager::getCalendar(const std::string& name) const
+std::optional<SharedCalendarItem> CalendarsManager::getCalendar(const std::string& name) const
 {
     return readObject(name);
 }
 
-void CalendarsManager::updateCalendar(const std::string& name, const std::shared_ptr<CalendarItem>& calendar)
+void CalendarsManager::updateCalendar(const std::string& name, const SharedCalendarItem& calendar)
 {
     // updateObject(name, calendar);
     // notify();
@@ -121,20 +121,20 @@ void CalendarsManager::setCalendarsCategoryActive(
 
 // Events CRUD
 
-void CalendarsManager::addEvent(const std::shared_ptr<CalendarEvent>& event) const
+void CalendarsManager::addEvent(const SharedCalendarEvent& event) const
 {
     auto calendar = getCalendar(event->getCalendarName())->get();
     calendar->addEvent(event);
     reloadEvents();
 }
-void CalendarsManager::removeEvent(const std::shared_ptr<CalendarEvent>& event) const
+void CalendarsManager::removeEvent(const SharedCalendarEvent& event) const
 {
     auto calendar = getCalendar(event->getCalendarName())->get();
     calendar->removeEvent(event);
     reloadEvents();
 }
 
-void CalendarsManager::removeEvents(const std::set<std::shared_ptr<CalendarEvent>>& events) const
+void CalendarsManager::removeEvents(const std::set<SharedCalendarEvent>& events) const
 {
     for (const auto& event : events)
     {
@@ -144,12 +144,12 @@ void CalendarsManager::removeEvents(const std::set<std::shared_ptr<CalendarEvent
     reloadEvents();
 }
 
-std::set<std::shared_ptr<CalendarEvent>> CalendarsManager::getEvents(
-    const std::chrono::time_point<std::chrono::system_clock>& beginDateTime,
-    const std::optional<std::chrono::time_point<std::chrono::system_clock>>& endDateTime,
+std::set<SharedCalendarEvent> CalendarsManager::getEvents(
+    const DateTime& beginDateTime,
+    const std::optional<DateTime>& endDateTime,
     bool shouldUpdateActiveDatesFrame)
 {
-    const std::chrono::time_point<std::chrono::system_clock> adjustedEndTime =
+    const DateTime adjustedEndTime =
         endDateTime.has_value() ? endDateTime.value() : CommonUtils::Time::endOfDate(beginDateTime);
 
     if (shouldUpdateActiveDatesFrame)
@@ -164,13 +164,13 @@ void CalendarsManager::reloadEvents() const
 
 // Private methods
 
-std::set<std::shared_ptr<CalendarEvent>> CalendarsManager::getEventsBetweenDatesForCalendars(
-    const std::chrono::time_point<std::chrono::system_clock> beginDateTime,
-    const std::chrono::time_point<std::chrono::system_clock> endDateTime) const
+std::set<SharedCalendarEvent> CalendarsManager::getEventsBetweenDatesForCalendars(
+    const DateTime beginDateTime,
+    const DateTime endDateTime) const
 {
     auto activeCalendars = getCalendars();
 
-    std::set<std::shared_ptr<CalendarEvent>> collectedEvents;
+    std::set<SharedCalendarEvent> collectedEvents;
     for (const auto& calendar : activeCalendars)
     {
         auto activeActualEvents = calendar->getEvents();
@@ -186,7 +186,7 @@ std::set<std::shared_ptr<CalendarEvent>> CalendarsManager::getEventsBetweenDates
             std::reduce(categories.begin(), categories.end(), std::set<std::string>{}, activeCategoryNamesReducer);
 
         auto activeActualEventsFilter = [&activeActualEvents, &beginDateTime, &endDateTime, &activeCategoryNames](
-                                            const std::shared_ptr<CalendarEvent>& event) {
+                                            const SharedCalendarEvent& event) {
             bool passedBeginTime = event->getBeginDateTime() >= beginDateTime;
 
             bool isPassedSingleDayEvent = !event->getEndDateTime().has_value() &&

@@ -17,7 +17,7 @@ void CommonUtils::performSetup()
     QCoreApplication::setApplicationName("Otuist");
 }
 
-std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::stdChronoTimePointFromQDateTime(QDateTime date)
+DateTime CommonUtils::Time::stdChronoTimePointFromQDateTime(QDateTime date)
 {
     std::tm time = {};
     std::istringstream ss{date.toString(qDateTimeFormat).toStdString()};
@@ -31,7 +31,7 @@ std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::stdChronoT
     return local_time_point;
 }
 
-std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::stdChronoTimePointFromQDate(QDate date)
+DateTime CommonUtils::Time::stdChronoTimePointFromQDate(QDate date)
 {
     std::tm time = {};
     std::istringstream ss{date.toString(qDateFormat).toStdString()};
@@ -45,13 +45,13 @@ std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::stdChronoT
     return local_time_point;
 }
 
-QDateTime CommonUtils::Time::qDateTimeFromStdChrono(std::chrono::time_point<std::chrono::system_clock> timePoint)
+QDateTime CommonUtils::Time::qDateTimeFromStdChrono(DateTime timePoint)
 {
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(timePoint.time_since_epoch()).count();
     return QDateTime::fromSecsSinceEpoch(duration);
 }
 
-std::string CommonUtils::Time::stringFromStdChrono(std::chrono::time_point<std::chrono::system_clock> date)
+std::string CommonUtils::Time::stringFromStdChrono(DateTime date)
 {
     std::time_t tt = std::chrono::system_clock::to_time_t(date);
     std::stringstream ss;
@@ -59,17 +59,15 @@ std::string CommonUtils::Time::stringFromStdChrono(std::chrono::time_point<std::
     return ss.str();
 }
 
-std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::beginOfDate(
-    std::chrono::time_point<std::chrono::system_clock> date)
+DateTime CommonUtils::Time::beginOfDate(DateTime date)
 {
     auto current_date = std::chrono::floor<std::chrono::days>(date);
     auto beginning_of_day = current_date.time_since_epoch();
-    auto time_point = std::chrono::time_point<std::chrono::system_clock>{beginning_of_day};
+    auto time_point = DateTime{beginning_of_day};
     return time_point;
 }
 
-std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::endOfDate(
-    std::chrono::time_point<std::chrono::system_clock> date)
+DateTime CommonUtils::Time::endOfDate(DateTime date)
 {
     std::time_t current_time_t = std::chrono::system_clock::to_time_t(date);
     std::tm* current_date = std::localtime(&current_time_t);
@@ -82,9 +80,7 @@ std::chrono::time_point<std::chrono::system_clock> CommonUtils::Time::endOfDate(
     return endOfDay;
 }
 
-bool CommonUtils::Time::isSameDay(
-    std::chrono::time_point<std::chrono::system_clock> lhs,
-    std::chrono::time_point<std::chrono::system_clock> rhs)
+bool CommonUtils::Time::isSameDay(DateTime lhs, DateTime rhs)
 {
     std::time_t lhs_current_time_t = std::chrono::system_clock::to_time_t(lhs);
     std::tm* lhs_current_date = std::localtime(&lhs_current_time_t);
@@ -96,10 +92,7 @@ bool CommonUtils::Time::isSameDay(
         lhs_current_date->tm_mon == rhs_current_date->tm_mon && lhs_current_date->tm_mday == rhs_current_date->tm_mday;
 }
 
-bool CommonUtils::Time::isBetweenDates(
-    std::chrono::time_point<std::chrono::system_clock> desiredEvent,
-    std::chrono::time_point<std::chrono::system_clock> beginDate,
-    std::chrono::time_point<std::chrono::system_clock> endDate)
+bool CommonUtils::Time::isBetweenDates(DateTime desiredEvent, DateTime beginDate, DateTime endDate)
 {
     return beginDate < endDate && beginDate <= desiredEvent && desiredEvent <= endDate;
 }

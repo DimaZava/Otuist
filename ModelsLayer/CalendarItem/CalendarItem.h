@@ -47,16 +47,16 @@ public:
     CalendarItem(
         const std::string& name,
         const std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator>& categories,
-        const std::set<std::shared_ptr<CalendarEvent>>& events = {});
+        const std::set<SharedCalendarEvent>& events = {});
     CalendarItem(const CalendarItem& calendar);
     CalendarItem(CalendarItem&& calendar) noexcept;
     ~CalendarItem() override;
 
     std::string getName() const override;
     std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator> getCategories() const;
-    void addEvent(const std::shared_ptr<CalendarEvent>& event);
-    void removeEvent(const std::shared_ptr<CalendarEvent>& event);
-    std::set<std::shared_ptr<CalendarEvent>> getEvents() const;
+    void addEvent(const SharedCalendarEvent& event);
+    void removeEvent(const SharedCalendarEvent& event);
+    std::set<SharedCalendarEvent> getEvents() const;
 
     CalendarItem& operator=(const CalendarItem& other);
     CalendarItem& operator=(CalendarItem&& other) noexcept;
@@ -68,7 +68,9 @@ public:
 private:
     std::string name;
     std::set<std::shared_ptr<CalendarCategory>, CalendarCategoryComparator> categories;
-    std::set<std::shared_ptr<CalendarEvent>> events;
+    std::set<SharedCalendarEvent> events;
 };
+
+typedef std::shared_ptr<CalendarItem> SharedCalendarItem;
 
 #endif // CALENDARITEM_H
