@@ -1,24 +1,93 @@
 #include "NotificationManager.h"
 
+#include <QThread>
 #include <QtCore>
 
+// NotificationManager
+
 NotificationManager::NotificationManager()
+{}
+
+void NotificationManager::scheduleNotification(const SharedCalendarEvent& event)
 {
+    // Naive
+
+    // auto notificationClosure = [&event, this]() {
+    //     auto updatedScript =
+    //         QString("osascript -e 'display notification \"message\" with title\"Event started\" subtitle \"%1\"'")
+    //             .arg(event->getName().c_str());
+    //     system(updatedScript.toStdString().c_str());
+
+    // if (auto it = scheduledNotifications.find(event->getUid()); it != scheduledNotifications.end())
+    //     scheduledNotifications.erase(it);
+    // };
+    // auto timer = std::make_shared<Timer>(notificationClosure, 10000);
+
+    // Future based
+
+    // std::future<void> future = std::async(std::launch::async | std::launch::deferred, [this, &event]() {
+    //     auto storedTimer = std::get<1>(*(&scheduledNotifications.at(event->getUid())));
+    //     storedTimer->start();
+    //     storedTimer->run();
+    // });
+
+    // scheduledNotifications[event->getUid()] = std::make_tuple<std::future<void>, std::shared_ptr<Timer>>(
+    //     std::async(
+    //         std::launch::async,
+    //         [this, &event]() {
+    //     auto storedTimer = std::get<1>(*(&scheduledNotifications.at(event->getUid())));
+    //     storedTimer->start();
+    //     storedTimer->run();
+    //         }),
+    //     std::make_shared<Timer>(notificationClosure, 10000));
+
+    // auto future = &std::get<0>(*(&scheduledNotifications.at(event->getUid())));
+    // future->wait();
+
+    // Promise based
+
+    // std::promise<void> notificationPromise;
+    // std::future<void> notificationFuture = notificationPromise.get_future();
+
+    // std::thread promiseThread(&NotificationManager::_scheduleNotification, this, std::move(notificationPromise),
+    // event);
+
+    // notificationFuture.wait();
+    // promiseThread.join();
+
+    // Qt native implementation
+    QThread* backgroundThread = new QThread;
+    this->moveToThread(backgroundThread);
+    connect(backgroundThread, &QThread::started, this, [&event, this]() {
+        auto notificationClosure = [event, this]() {
+            auto updatedScript =
+                QString("osascript -e 'display notification \"message\" with title\"Event started\" subtitle \"%1\"'")
+                    .arg(event->getName().c_str());
+            system(updatedScript.toStdString().c_str());
+
+            if (auto it = scheduledNotificationsTimers.find(event->getUid()); it != scheduledNotificationsTimers.end())
+                scheduledNotificationsTimers.erase(it);
+        };
+        // 15 Seconds for demonstration purposes, update to production value once needed
+        auto timer = std::make_shared<Timer>(notificationClosure, 15000);
+        scheduledNotificationsTimers[event->getUid()] = timer;
+
+        timer->start();
+        timer->run();
+    });
+    backgroundThread->start();
 }
 
-void NotificationManager::scheduleNotification(SharedCalendarEvent event)
+void NotificationManager::unscheduleNotification(const SharedCalendarEvent& event)
 {
-    auto notificationClosure = [&event]() {
-        auto updatedScript =
-            QString("osascript -e 'display notification \"message\" with title\"Attention\" subtitle \"%1\"'")
-                .arg(event->getName().c_str());
-        system(updatedScript.toStdString().c_str());
-    };
-    auto timer = std::make_unique<Timer>(notificationClosure, 150);
-    timer->start();
-    timer->run();
-    scheduledNotifications[event->getUid()] = std::move(timer);
+    if (auto it = scheduledNotificationsTimers.find(event->getUid()); it != scheduledNotificationsTimers.end())
+    {
+        it->second->stop();
+        scheduledNotificationsTimers.erase(it);
+    }
 }
+
+// Timer
 
 Timer::Timer(std::function<void()> callback, int delay)
     : callback(callback)
@@ -34,6 +103,7 @@ Timer::Timer(Timer&& timer) noexcept
 
 Timer::~Timer()
 {
+    stop();
     qDebug() << __PRETTY_FUNCTION__;
 }
 

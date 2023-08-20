@@ -27,7 +27,7 @@ AddCalendarDTO AddCalendarDialog::getReturnValue()
 {
     std::set<std::string> categories;
     auto calendarName = nameTextEdit->toPlainText().toStdString();
-    for (size_t i = 0; i < categoriesList->count(); ++i)
+    for (int i = 0; i < categoriesList->count(); ++i)
     {
         auto widget = categoriesList->itemAt(i)->widget();
         if (widget == nullptr)
@@ -42,6 +42,7 @@ AddCalendarDTO AddCalendarDialog::getReturnValue()
 
 void AddCalendarDialog::setupInitialState()
 {
+    setWindowTitle(tr("Add Calendar"));
     nameTextEdit->setFixedHeight(28);
 
     categoriesContainerWidget->setMinimumHeight(128);

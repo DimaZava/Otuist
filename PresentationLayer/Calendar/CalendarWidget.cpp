@@ -196,7 +196,7 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
 
         const int ret = InterfaceUtils::showConfirmationAlert(
             tr("Delete Events"),
-            tr("Do you really want to delete all %1 event").arg(eventsToRemove.size()),
+            tr("Do you really want to delete %1 event(s)?").arg(eventsToRemove.size()),
             QMessageBox::Ok | QMessageBox::Cancel,
             QMessageBox::Ok);
 

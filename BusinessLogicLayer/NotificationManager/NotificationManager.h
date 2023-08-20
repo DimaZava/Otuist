@@ -3,6 +3,7 @@
 
 #include "../../ModelsLayer/CalendarEvent/CalendarEvent.h"
 
+#include <QCoreApplication>
 #include <chrono>
 #include <functional>
 #include <map>
@@ -31,15 +32,17 @@ private:
     void checkElapsedTime();
 };
 
-class NotificationManager
+class NotificationManager : public QObject
 {
+    Q_OBJECT
 public:
     NotificationManager();
 
-    void scheduleNotification(SharedCalendarEvent event);
+    void scheduleNotification(const SharedCalendarEvent& event);
+    void unscheduleNotification(const SharedCalendarEvent& event);
 
 private:
-    std::map<std::string, std::unique_ptr<Timer>> scheduledNotifications;
+    std::map<std::string, std::shared_ptr<Timer>> scheduledNotificationsTimers;
 };
 
 #endif // NOTIFICATIONMANAGER_H

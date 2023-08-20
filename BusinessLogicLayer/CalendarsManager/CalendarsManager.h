@@ -2,6 +2,7 @@
 #define CALENDARSMANAGER_H
 
 #include "../../BusinessLogicLayer/CommonUtils/CommonUtils.h"
+#include "../../BusinessLogicLayer/NotificationManager/NotificationManager.h"
 #include "../../BusinessLogicLayer/ObjectsRepository.h"
 #include "../../BusinessLogicLayer/Observer.h"
 #include "../../ModelsLayer/CalendarItem/CalendarItem.h"
@@ -54,6 +55,8 @@ public:
     CalendarsManager& operator=(CalendarsManager&& other) = delete;
 
 private:
+    std::unique_ptr<NotificationManager> notificationsManager;
+
     std::set<SharedCalendarEvent> getEventsBetweenDatesForCalendars(
         const DateTime beginDateTime,
         const DateTime endDateTime) const;

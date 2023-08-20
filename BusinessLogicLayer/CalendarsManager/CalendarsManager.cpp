@@ -5,6 +5,7 @@
 #include <ranges>
 
 CalendarsManager::CalendarsManager()
+    : notificationsManager(std::make_unique<NotificationManager>())
 {
     const auto now = std::chrono::system_clock::now();
 
@@ -126,9 +127,13 @@ void CalendarsManager::addEvent(const SharedCalendarEvent& event) const
     auto calendar = getCalendar(event->getCalendarName())->get();
     calendar->addEvent(event);
     reloadEvents();
+
+    notificationsManager->scheduleNotification(event);
 }
 void CalendarsManager::removeEvent(const SharedCalendarEvent& event) const
 {
+    notificationsManager->unscheduleNotification(event);
+
     auto calendar = getCalendar(event->getCalendarName())->get();
     calendar->removeEvent(event);
     reloadEvents();

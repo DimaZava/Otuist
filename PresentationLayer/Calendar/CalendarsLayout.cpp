@@ -128,8 +128,8 @@ void CalendarsLayout::removeCalendarActionTriggered()
         return;
 
     const int ret = InterfaceUtils::showConfirmationAlert(
-        tr("Delete Events"),
-        tr("You really want to delete calendar %1 with all %2 events?")
+        tr("Delete Calendars"),
+        tr("Do you really want to delete calendar %1 with %2 event(s)?")
             .arg(QString(calendarName.c_str()), QString::number(calendar.value()->getEvents().size())),
         QMessageBox::Ok | QMessageBox::Cancel,
         QMessageBox::Ok);
