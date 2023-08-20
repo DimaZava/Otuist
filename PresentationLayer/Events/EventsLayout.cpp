@@ -70,7 +70,7 @@ void EventsLayout::reloadData()
     for (const auto& event : calendarEvents)
     {
         QListWidgetItem* newItem = new QListWidgetItem;
-        EventWidget* eventWidget = new EventWidget{event};
+        EventWidget* eventWidget = new EventWidget{event, calendarsManager};
 
         eventWidget->delegate = this;
 
@@ -96,4 +96,9 @@ void EventsLayout::cleanItems()
 void EventsLayout::removeEventButtonDidClick(const SharedCalendarEvent& event)
 {
     calendarsManager->removeEvent(event);
+}
+
+void EventsLayout::eventUpdateDidFinish()
+{
+    calendarsManager->reloadEvents();
 }

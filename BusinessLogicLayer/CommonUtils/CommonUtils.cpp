@@ -73,7 +73,24 @@ DateTime CommonUtils::Time::endOfDate(DateTime date)
     std::tm* current_date = std::localtime(&current_time_t);
     current_date->tm_hour = 23;
     current_date->tm_min = 59;
-    current_date->tm_sec = 59;
+    current_date->tm_sec = 00;
+
+    auto endOfDay = std::chrono::system_clock::from_time_t(std::mktime(current_date));
+
+    return endOfDay;
+}
+
+DateTime CommonUtils::Time::nextHourToday(DateTime date)
+{
+    std::time_t current_time_t = std::chrono::system_clock::to_time_t(date);
+    std::tm* current_date = std::localtime(&current_time_t);
+
+    const int adjustedHours = current_date->tm_hour != 23 ? current_date->tm_hour + 1 : current_date->tm_hour;
+    const int adjustedMinutes = current_date->tm_hour != 23 ? 0 : 59;
+
+    current_date->tm_hour = adjustedHours;
+    current_date->tm_min = adjustedMinutes;
+    current_date->tm_sec = 00;
 
     auto endOfDay = std::chrono::system_clock::from_time_t(std::mktime(current_date));
 

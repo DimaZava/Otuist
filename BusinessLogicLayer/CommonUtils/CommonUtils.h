@@ -21,6 +21,7 @@ static const char* dateTimeFormat = "%d.%m.%Y %H:%M";
 
 DateTime beginOfDate(DateTime date = now);
 DateTime endOfDate(DateTime date = now);
+DateTime nextHourToday(DateTime date);
 
 DateTime stdChronoTimePointFromQDateTime(QDateTime date);
 DateTime stdChronoTimePointFromQDate(QDate date);

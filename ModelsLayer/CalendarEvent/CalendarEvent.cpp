@@ -97,7 +97,7 @@ const std::optional<DateTime> CalendarEvent::getEndDateTime() const
     return endDateTime;
 }
 
-void CalendarEvent::endEndDateTime(const std::optional<DateTime>& dateTime)
+void CalendarEvent::setEndDateTime(const std::optional<DateTime>& dateTime)
 {
     this->endDateTime = dateTime;
 }

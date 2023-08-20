@@ -33,7 +33,7 @@ public slots:
     void setBeginDateTime(const DateTime& dateTime);
 
     const std::optional<DateTime> getEndDateTime() const;
-    void endEndDateTime(const std::optional<DateTime>& dateTime);
+    void setEndDateTime(const std::optional<DateTime>& dateTime);
 
     const std::string getName() const;
     void setName(const std::string& name);

@@ -31,6 +31,7 @@ public:
 
     // EventWidgetDelegate
     void removeEventButtonDidClick(const SharedCalendarEvent& event) override;
+    void eventUpdateDidFinish() override;
 
 private:
     const std::unique_ptr<QListWidget> eventsList;

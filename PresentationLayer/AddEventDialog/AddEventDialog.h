@@ -32,6 +32,11 @@ public:
         const DateTime& endDateTime,
         QWidget* parent = nullptr);
 
+    AddEventDialog(
+        const SharedCalendarEvent& event,
+        const std::set<SharedCalendarItem>& calendars,
+        QWidget* parent = nullptr);
+
     AddEventDialog(const AddEventDialog& dialog) = delete;
     AddEventDialog(AddEventDialog&& dialog) = delete;
 
@@ -44,6 +49,8 @@ public:
 
 private:
     void setupInitialState();
+    void configureForAdding();
+    void configureForEditing(const SharedCalendarEvent& event);
 
     std::set<SharedCalendarItem> calendars;
     std::unique_ptr<QFormLayout> formLayout;

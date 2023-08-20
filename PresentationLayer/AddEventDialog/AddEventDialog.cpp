@@ -22,6 +22,29 @@ AddEventDialog::AddEventDialog(
     , saveButton(std::make_unique<QPushButton>())
 {
     setupInitialState();
+    configureForAdding();
+}
+
+AddEventDialog::AddEventDialog(
+    const SharedCalendarEvent& event,
+    const std::set<SharedCalendarItem>& calendars,
+    QWidget* parent)
+    : QDialog(parent)
+    , calendars(calendars)
+    , lastBeginDateTime(event->getBeginDateTime())
+    , lastEndDateTime(event->getEndDateTime().value_or(CommonUtils::Time::nextHourToday(event->getBeginDateTime())))
+    , formLayout(std::make_unique<QFormLayout>(this))
+    , nameTextEdit(std::make_unique<QTextEdit>(this))
+    , calendarsComboBox(std::make_unique<QComboBox>(this))
+    , categoriesComboBox(std::make_unique<QComboBox>(this))
+    , wholeDayCheckbox(std::make_unique<QCheckBox>(this))
+    , beginDateTimePicker(std::make_unique<QDateTimeEdit>(this))
+    , endDateTimePicker(std::make_unique<QDateTimeEdit>(this))
+    , descriptionTextEdit(std::make_unique<QTextEdit>(this))
+    , saveButton(std::make_unique<QPushButton>())
+{
+    setupInitialState();
+    configureForEditing(event);
 }
 
 AddEventDialog::~AddEventDialog()
@@ -85,10 +108,6 @@ void AddEventDialog::setupInitialState()
     saveButton->setText(tr("OK"));
     formLayout->addRow(saveButton.get());
 
-    for (const auto& calendar : calendars)
-        calendarsComboBox->addItem(QString{calendar->getName().c_str()});
-    calendarsComboBox->setCurrentIndex(0);
-    calendarComboboxValueChanged(calendarsComboBox->currentText());
     connect(
         calendarsComboBox.get(), &QComboBox::currentTextChanged, this, &AddEventDialog::calendarComboboxValueChanged);
 
@@ -98,13 +117,40 @@ void AddEventDialog::setupInitialState()
     endDateTimePicker->setDisplayFormat(CommonUtils::Time::qDateTimeFormat);
     connect(endDateTimePicker.get(), &QDateTimeEdit::dateTimeChanged, this, &AddEventDialog::endDateTimeChanged);
 
-    wholeDayCheckbox->setCheckState(Qt::CheckState::Checked);
     connect(wholeDayCheckbox.get(), &QCheckBox::stateChanged, this, &AddEventDialog::wholeDayCheckboxStateChange);
-    wholeDayCheckboxStateChange(wholeDayCheckbox->checkState());
 
     connect(saveButton.get(), &QPushButton::clicked, this, &AddEventDialog::saveButtonDidClick);
 
     setLayout(formLayout.get());
+}
+
+void AddEventDialog::configureForAdding()
+{
+    for (const auto& calendar : calendars)
+        calendarsComboBox->addItem(QString{calendar->getName().c_str()});
+    calendarsComboBox->setCurrentIndex(0);
+    calendarComboboxValueChanged(calendarsComboBox->currentText());
+
+    wholeDayCheckbox->setCheckState(Qt::CheckState::Checked);
+    wholeDayCheckboxStateChange(wholeDayCheckbox->checkState());
+}
+
+void AddEventDialog::configureForEditing(const SharedCalendarEvent& event)
+{
+    nameTextEdit->setText(QString{event->getName().c_str()});
+
+    for (const auto& calendar : calendars)
+        calendarsComboBox->addItem(QString{calendar->getName().c_str()});
+    calendarsComboBox->setCurrentIndex(0);
+    calendarComboboxValueChanged(calendarsComboBox->currentText());
+
+    // No need to set dates explicitly, since they are stored in last dates properties in ctr
+    // and will be updated after calling wholeDayCheckboxStateChange
+    wholeDayCheckbox->setCheckState(
+        event->getEndDateTime().has_value() ? Qt::CheckState::Unchecked : Qt::CheckState::Checked);
+    wholeDayCheckboxStateChange(wholeDayCheckbox->checkState());
+
+    descriptionTextEdit->setText(QString{event->getDescription()->c_str()});
 }
 
 void AddEventDialog::calendarComboboxValueChanged(const QString& calendarName)

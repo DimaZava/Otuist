@@ -130,6 +130,7 @@ void CalendarsManager::addEvent(const SharedCalendarEvent& event) const
 
     notificationsManager->scheduleNotification(event);
 }
+
 void CalendarsManager::removeEvent(const SharedCalendarEvent& event) const
 {
     notificationsManager->unscheduleNotification(event);
@@ -154,8 +155,7 @@ std::set<SharedCalendarEvent> CalendarsManager::getEvents(
     const std::optional<DateTime>& endDateTime,
     bool shouldUpdateActiveDatesFrame)
 {
-    const DateTime adjustedEndTime =
-        endDateTime.has_value() ? endDateTime.value() : CommonUtils::Time::endOfDate(beginDateTime);
+    const DateTime adjustedEndTime = endDateTime.value_or(CommonUtils::Time::endOfDate(beginDateTime));
 
     if (shouldUpdateActiveDatesFrame)
         activeDatesFrame.updateDates(beginDateTime, adjustedEndTime);

@@ -1,14 +1,20 @@
 #include "EventWidget.h"
 #include "../../BusinessLogicLayer/CommonUtils/CommonUtils.h"
+#include "../AddEventDialog/AddEventDialog.h"
 #include "../InterfaceUtils.h"
 
 #include <QLabel>
-#include <QPushButton>
 
-EventWidget::EventWidget(const SharedCalendarEvent& event, QWidget* parent)
+EventWidget::EventWidget(
+    const SharedCalendarEvent& event,
+    const std::shared_ptr<CalendarsManager>& calendarsManager,
+    QWidget* parent)
     : QWidget{parent}
     , event(event)
+    , calendarsManager(calendarsManager)
     , mainLayout(std::make_unique<QHBoxLayout>(this))
+    , editButton(std::make_unique<QPushButton>(this))
+    , deleteButton(std::make_unique<QPushButton>(this))
 {
     setupInitialState();
 }
@@ -33,18 +39,38 @@ void EventWidget::setupInitialState()
     {
         eventString += "End Date: " + CommonUtils::Time::stringFromStdChrono(event->getEndDateTime().value()) + "\n";
     }
-    eventString += "Description: " + event->getDescription().value_or("N/A") + "\n";
-
+    eventString += "Description: " + event->getDescription().value_or("N/A");
     eventLabel->setText(eventString.c_str());
 
-    QPushButton* deleteButton = new QPushButton(this);
+    editButton->setText(tr("Edit"));
+    editButton->setFixedWidth(120);
+    connect(editButton.get(), &QPushButton::clicked, this, &EventWidget::editButtonDidClick);
+
     deleteButton->setText(tr("Remove"));
     deleteButton->setFixedWidth(120);
-
-    connect(deleteButton, &QPushButton::clicked, this, &EventWidget::removeButtonDidClick);
+    connect(deleteButton.get(), &QPushButton::clicked, this, &EventWidget::removeButtonDidClick);
 
     mainLayout->addWidget(eventLabel);
-    mainLayout->addWidget(deleteButton);
+    mainLayout->addWidget(editButton.get());
+    mainLayout->addWidget(deleteButton.get());
+}
+
+void EventWidget::editButtonDidClick(bool checked)
+{
+    AddEventDialog dialog(event, calendarsManager->getCalendars(), this);
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        auto addEventDTO = dialog.getReturnValue();
+
+        event->setName(addEventDTO.name);
+        event->setCalendarName(addEventDTO.calendarName);
+        event->setCategory(addEventDTO.category);
+        event->setBeginDateTime(addEventDTO.beginDateTime);
+        event->setEndDateTime(addEventDTO.endDateTime);
+        event->setDescription(addEventDTO.description);
+
+        delegate->eventUpdateDidFinish();
+    }
 }
 
 void EventWidget::removeButtonDidClick(bool checked) const
