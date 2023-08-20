@@ -150,7 +150,8 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
 {
     QPoint item = this->mapToGlobal(pos);
     const QTableView* const view = findChild<const QTableView*>();
-    const QModelIndex clickedIndex = view->indexAt(view->viewport()->mapFromGlobal(item));
+    const QPoint viewportPos = view->viewport()->mapFromGlobal(item);
+    const QModelIndex clickedIndex = view->indexAt(viewportPos);
 
     if (!clickedIndex.isValid() || clickedIndex.column() == 0 || clickedIndex.row() == 0)
         return;
@@ -166,12 +167,29 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
 
     if (rightClickItem->text() == tr("Add"))
     {
-        auto addDate = dateFromPosition(item);
-        qDebug() << tr("Add") << addDate.value().toString();
+        // Position relative hour selection
+        const QRect rect = view->visualRect(clickedIndex);
+        const QPoint localPoint = viewportPos - rect.topLeft();
+        const double relativeVerticalPosition = double(localPoint.y()) / double(rect.height());
+
+        const auto addDate = dateFromPosition(item);
 
         if (addDate.has_value())
         {
-            AddEventDialog dialog(CommonUtils::Time::stdChronoTimePointFromQDate(addDate.value()), std::nullopt, this);
+            const int adjustedBeginHours = std::min(23, int(round(24 * relativeVerticalPosition))); // 24h is illegal
+            const int adjustedEndHours = adjustedBeginHours != 23 ? adjustedBeginHours + 1 : adjustedBeginHours;
+            const int adjustedEndMinutes = adjustedBeginHours != 23 ? 0 : 59;
+
+            const auto beginTime = QTime(adjustedBeginHours, 0);
+            const auto endTime = QTime(adjustedEndHours, adjustedEndMinutes);
+            const auto beginDateTime = QDateTime(addDate.value(), beginTime);
+            const auto endDateTime = QDateTime(addDate.value(), endTime);
+            const auto convertedBeginDateTime = CommonUtils::Time::stdChronoTimePointFromQDateTime(beginDateTime);
+            const auto convertedEndDateTime = CommonUtils::Time::stdChronoTimePointFromQDateTime(endDateTime);
+            qDebug() << "Add " << CommonUtils::Time::stringFromStdChrono(convertedBeginDateTime) << "-"
+                     << CommonUtils::Time::stringFromStdChrono(convertedEndDateTime);
+
+            AddEventDialog dialog(calendarsManager->getCalendars(), convertedBeginDateTime, convertedEndDateTime, this);
             if (dialog.exec() == QDialog::Accepted)
             {
                 auto addEventDTO = dialog.getReturnValue();

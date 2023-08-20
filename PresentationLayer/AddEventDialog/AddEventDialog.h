@@ -2,7 +2,10 @@
 #define ADDEVENTDIALOG_H
 
 #include "../../BusinessLogicLayer/CommonUtils/CommonUtils.h"
+#include "../../ModelsLayer/CalendarItem/CalendarItem.h"
 
+#include <QCheckBox>
+#include <QComboBox>
 #include <QDateTimeEdit>
 #include <QDialog>
 #include <QFormLayout>
@@ -24,8 +27,9 @@ class AddEventDialog : public QDialog
     Q_OBJECT
 public:
     AddEventDialog(
-        std::optional<DateTime> beginDateTime,
-        std::optional<DateTime> endDateTime,
+        const std::set<SharedCalendarItem>& calendars,
+        const DateTime& beginDateTime,
+        const DateTime& endDateTime,
         QWidget* parent = nullptr);
 
     AddEventDialog(const AddEventDialog& dialog) = delete;
@@ -39,18 +43,27 @@ public:
     AddEventDialogDTO getReturnValue();
 
 private:
-    void setupInitialState(std::optional<DateTime> beginDateTime, std::optional<DateTime> endDateTime);
+    void setupInitialState();
 
+    std::set<SharedCalendarItem> calendars;
     std::unique_ptr<QFormLayout> formLayout;
     std::unique_ptr<QTextEdit> nameTextEdit;
-    std::unique_ptr<QTextEdit> calendarNameTextEdit;
-    std::unique_ptr<QTextEdit> categoryNameTextEdit;
+    std::unique_ptr<QComboBox> calendarsComboBox;
+    std::unique_ptr<QComboBox> categoriesComboBox;
+    std::unique_ptr<QCheckBox> wholeDayCheckbox;
     std::unique_ptr<QDateTimeEdit> beginDateTimePicker;
     std::unique_ptr<QDateTimeEdit> endDateTimePicker;
     std::unique_ptr<QTextEdit> descriptionTextEdit;
     std::unique_ptr<QPushButton> saveButton;
 
+    DateTime lastBeginDateTime;
+    DateTime lastEndDateTime;
+
 private slots:
+    void calendarComboboxValueChanged(const QString& calendarName);
+    void wholeDayCheckboxStateChange(int newState);
+    void beginDateTimeChanged(const QDateTime& dateTime);
+    void endDateTimeChanged(const QDateTime& dateTime);
     void saveButtonDidClick(bool checked);
 };
 
