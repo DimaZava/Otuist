@@ -192,15 +192,39 @@ std::set<SharedCalendarEvent> CalendarsManager::getEventsBetweenDatesForCalendar
 
         auto activeActualEventsFilter = [&activeActualEvents, &beginDateTime, &endDateTime, &activeCategoryNames](
                                             const SharedCalendarEvent& event) {
-            bool passedBeginTime = event->getBeginDateTime() >= beginDateTime;
+            qDebug() << "Event name" << event->getName();
+            qDebug() << "beginDateTime: " << CommonUtils::Time::stringFromStdChrono(beginDateTime);
+            qDebug() << "endDateTime: " << CommonUtils::Time::stringFromStdChrono(endDateTime);
 
-            bool isPassedSingleDayEvent = !event->getEndDateTime().has_value() &&
-                CommonUtils::Time::isBetweenDates(event->getBeginDateTime(), beginDateTime, endDateTime);
+            qDebug() << "event->getBeginDateTime: "
+                     << CommonUtils::Time::stringFromStdChrono(event->getBeginDateTime());
+            if (event->getEndDateTime().has_value())
+                qDebug() << "event->getEndDateTime: "
+                         << CommonUtils::Time::stringFromStdChrono(event->getEndDateTime().value());
 
-            bool passedEndTime = !event->getEndDateTime().has_value() && isPassedSingleDayEvent ||
-                event->getEndDateTime().has_value() && event->getEndDateTime().value() <= endDateTime;
+            if (event->isRangeEvent())
+            {
+                bool isPassedMultiDayBeginTime = CommonUtils::Time::isBetweenDates(
+                    beginDateTime, event->getBeginDateTime(), event->getEndDateTime().value());
 
-            return passedBeginTime && passedEndTime && activeCategoryNames.contains(event->getCategory());
+                bool isPassedMultiDayEndTime =
+                    event->getEndDateTime().has_value() &&
+                    CommonUtils::Time::isBetweenDates(
+                        endDateTime, event->getBeginDateTime(), event->getEndDateTime().value());
+
+                return isPassedMultiDayBeginTime && isPassedMultiDayEndTime &&
+                    activeCategoryNames.contains(event->getCategory());
+            }
+            else
+            {
+                bool isPassedSingleDayBeginTime = event->getBeginDateTime() >= beginDateTime;
+
+                bool isPassedSingleDayEndTime = !event->getEndDateTime().has_value() &&
+                    CommonUtils::Time::isBetweenDates(event->getBeginDateTime(), beginDateTime, endDateTime);
+
+                return isPassedSingleDayBeginTime && isPassedSingleDayEndTime &&
+                    activeCategoryNames.contains(event->getCategory());
+            }
         };
 
         auto result = activeActualEvents | std::ranges::views::filter(activeActualEventsFilter);
