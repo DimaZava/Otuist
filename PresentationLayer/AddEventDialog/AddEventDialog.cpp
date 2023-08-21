@@ -131,7 +131,10 @@ void AddEventDialog::configureForAdding()
     calendarsComboBox->setCurrentIndex(0);
     calendarComboboxValueChanged(calendarsComboBox->currentText());
 
-    wholeDayCheckbox->setCheckState(Qt::CheckState::Checked);
+    const auto duration = lastEndDateTime - lastBeginDateTime;
+    const auto days = std::chrono::duration_cast<std::chrono::days>(duration).count();
+
+    wholeDayCheckbox->setCheckState(days == 0 ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
     wholeDayCheckboxStateChange(wholeDayCheckbox->checkState());
 }
 

@@ -167,15 +167,35 @@ void CalendarWidget::provideContextMenu(const QPoint& pos)
 
     if (rightClickItem->text() == tr("Add"))
     {
-        // Position relative hour selection
-        const QRect rect = view->visualRect(clickedIndex);
-        const QPoint localPoint = viewportPos - rect.topLeft();
-        const double relativeVerticalPosition = double(localPoint.y()) / double(rect.height());
-
-        const auto addDate = dateFromPosition(item);
-
-        if (addDate.has_value())
+        // Multidate case: get some predefined dates based on selections
+        if (beginDate.has_value() && endDate.has_value() && (beginDate.value() != endDate.value()))
         {
+            auto convertedBeginRangeDate = CommonUtils::Time::stdChronoTimePointFromQDate(beginDate.value());
+            auto convertedEndRangeDate =
+                CommonUtils::Time::endOfDate(CommonUtils::Time::stdChronoTimePointFromQDate(endDate.value()));
+
+            AddEventDialog dialog(
+                calendarsManager->getCalendars(), convertedBeginRangeDate, convertedEndRangeDate, this);
+            if (dialog.exec() == QDialog::Accepted)
+            {
+                auto addEventDTO = dialog.getReturnValue();
+                calendarsManager->addEvent(std::make_shared<CalendarEvent>(
+                    addEventDTO.name,
+                    addEventDTO.calendarName,
+                    addEventDTO.category,
+                    addEventDTO.beginDateTime,
+                    addEventDTO.endDateTime,
+                    addEventDTO.description));
+            }
+        }
+        // Single date case: get date from coursor position
+        else if (const auto addDate = dateFromPosition(item); addDate.has_value())
+        {
+            // Position relative hour selection
+            const QRect rect = view->visualRect(clickedIndex);
+            const QPoint localPoint = viewportPos - rect.topLeft();
+            const double relativeVerticalPosition = double(localPoint.y()) / double(rect.height());
+
             const int adjustedBeginHours = std::min(23, int(round(24 * relativeVerticalPosition))); // 24h is illegal
             const int adjustedEndHours = adjustedBeginHours != 23 ? adjustedBeginHours + 1 : adjustedBeginHours;
             const int adjustedEndMinutes = adjustedBeginHours != 23 ? 0 : 59;

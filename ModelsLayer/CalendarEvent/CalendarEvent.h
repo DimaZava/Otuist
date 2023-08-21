@@ -28,7 +28,6 @@ public:
     bool operator==(const CalendarEvent& other) const;
     bool operator!=(const CalendarEvent& other) const;
 
-public slots:
     const DateTime getBeginDateTime() const;
     void setBeginDateTime(const DateTime& dateTime);
 
@@ -63,6 +62,8 @@ public slots:
 
     const std::optional<std::string> getHref() const;
     void setHref(const std::optional<std::string>& href);
+
+    bool isRangeEvent() const;
 
 private:
     DateTime beginDateTime;

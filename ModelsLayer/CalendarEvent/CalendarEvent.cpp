@@ -196,3 +196,8 @@ void CalendarEvent::setHref(const std::optional<std::string>& href)
 {
     this->href = href;
 }
+
+bool CalendarEvent::isRangeEvent() const
+{
+    return endDateTime.has_value() && (endDateTime.value() != beginDateTime);
+}
